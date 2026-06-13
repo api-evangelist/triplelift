@@ -1,0 +1,113 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "triplelift": "https://triplelift.com/vocab/",
+    "aid": "triplelift:aid",
+    "openrtb": "https://www.iab.com/openrtb/",
+
+    "Organization": "Organization",
+    "name": "name",
+    "description": "description",
+    "url": "url",
+    "sameAs": "sameAs",
+
+    "WebAPI": "WebAPI",
+    "documentation": "documentation",
+    "provider": "provider",
+    "termsOfService": "termsOfService",
+
+    "BidRequest": "triplelift:BidRequest",
+    "BidResponse": "triplelift:BidResponse",
+    "NativeAdUnit": "triplelift:NativeAdUnit",
+    "NativeRequest": "triplelift:NativeRequest",
+    "NativeResponse": "triplelift:NativeResponse",
+    "ImpObject": "triplelift:ImpObject",
+    "SiteObject": "triplelift:SiteObject",
+    "AppObject": "triplelift:AppObject",
+    "DeviceObject": "triplelift:DeviceObject",
+    "UserObject": "triplelift:UserObject",
+    "DealObject": "triplelift:DealObject",
+    "SegmentObject": "triplelift:SegmentObject",
+    "AssetObject": "triplelift:AssetObject",
+    "TitleAsset": "triplelift:TitleAsset",
+    "ImageAsset": "triplelift:ImageAsset",
+    "VideoAsset": "triplelift:VideoAsset",
+    "DataAsset": "triplelift:DataAsset",
+    "LinkObject": "triplelift:LinkObject",
+    "EventTracker": "triplelift:EventTracker",
+
+    "PublisherNetworkReport": "triplelift:PublisherNetworkReport",
+    "CtvPublisherNetworkReport": "triplelift:CtvPublisherNetworkReport",
+    "ReportQuery": "triplelift:ReportQuery",
+    "SynchronousQuery": "triplelift:SynchronousQuery",
+    "AsynchronousQuery": "triplelift:AsynchronousQuery",
+
+    "Exchange": "triplelift:Exchange",
+    "Bidder": "triplelift:Bidder",
+    "BidderInstance": "triplelift:BidderInstance",
+    "Publisher": "triplelift:Publisher",
+    "SupplyPartner": "triplelift:SupplyPartner",
+    "DemandPartner": "triplelift:DemandPartner",
+
+    "UserSync": "triplelift:UserSync",
+    "WinNotification": "triplelift:WinNotification",
+    "CreativeApproval": "triplelift:CreativeApproval",
+    "SKAdNetwork": "triplelift:SKAdNetwork",
+
+    "openRTBVersion": "triplelift:openRTBVersion",
+    "nativeVersion": "triplelift:nativeVersion",
+    "bidFloor": "triplelift:bidFloor",
+    "currency": "triplelift:currency",
+    "maxBids": "triplelift:maxBids",
+    "responseTimeout": "triplelift:responseTimeout",
+    "secondPriceAuction": "triplelift:secondPriceAuction",
+
+    "gdprConsent": "triplelift:gdprConsent",
+    "ccpaConsent": "triplelift:ccpaConsent",
+    "privacyCompliance": "triplelift:privacyCompliance",
+
+    "ConnectedTV": "triplelift:ConnectedTV",
+    "HeaderBidding": "triplelift:HeaderBidding",
+    "ProgrammaticDirect": "triplelift:ProgrammaticDirect",
+    "Curation": "triplelift:Curation",
+
+    "rateLimit": "triplelift:rateLimit",
+    "apiVersion": "triplelift:apiVersion",
+    "datacenter": "triplelift:datacenter",
+    "region": "triplelift:region"
+  },
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://triplelift.com",
+      "name": "TripleLift",
+      "description": "TripleLift is a programmatic advertising company specializing in native inventory with APIs for managing native ad units, deals, targeting, viewability measurement, and creative quality.",
+      "url": "https://triplelift.com",
+      "sameAs": [
+        "https://github.com/triplelift",
+        "https://www.linkedin.com/company/triplelift/",
+        "https://twitter.com/TripleLiftHQ"
+      ]
+    },
+    {
+      "@type": "WebAPI",
+      "@id": "https://tlx.3lift.com",
+      "name": "TripleLift Exchange (TLX) API",
+      "description": "Real-time bidding API implementing OpenRTB 2.x and Native Ads 1.2 specifications for demand partners to participate in native, banner, and video ad auctions.",
+      "documentation": "https://docs.triplelift.com",
+      "provider": {
+        "@id": "https://triplelift.com"
+      }
+    },
+    {
+      "@type": "WebAPI",
+      "@id": "https://supply-docs.triplelift.com",
+      "name": "TripleLift Supply Publisher API",
+      "description": "REST API for supply partners and publishers to access network reporting, connected TV publisher network reports, and integration management.",
+      "documentation": "https://supply-docs.triplelift.com/reference/introduction",
+      "provider": {
+        "@id": "https://triplelift.com"
+      }
+    }
+  ]
+}
