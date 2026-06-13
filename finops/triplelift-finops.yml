@@ -1,0 +1,54 @@
+name: TripleLift FinOps
+description: Financial operations guidance for teams integrating with TripleLift's
+  programmatic advertising exchange and publisher APIs. TripleLift operates as an
+  SSP/exchange with negotiated, volume-based pricing. There are no metered API call
+  costs — costs are tied to advertising spend and publisher revenue share agreements.
+costModel:
+  type: Negotiated Enterprise / Revenue Share
+  description: TripleLift does not charge per-API-call fees. Demand-side costs are
+    driven by CPM (cost per thousand impressions) bids placed through the exchange.
+    Supply-side revenue is based on publisher revenue share from filled impressions.
+    All commercial terms are negotiated directly with TripleLift.
+  billingTypes:
+    - name: CPM-Based Advertising Spend (Demand Partners / Buyers)
+      description: DSPs and buyers pay on a CPM basis for impressions won in the
+        TripleLift auction. No platform fee is publicly disclosed; pricing is embedded
+        in the auction mechanics and any applicable managed service fees.
+    - name: Publisher Revenue Share (Supply Partners)
+      description: Publishers receive a negotiated revenue share percentage of cleared
+        CPM for inventory sold through TripleLift. Revenue share terms are established
+        in the publisher partnership agreement.
+    - name: Deal-Based Pricing (Private Marketplace / PMP)
+      description: Private marketplace deals and preferred deals are negotiated between
+        buyers and TripleLift/publishers. Deal IDs are activated through DSP platforms
+        (e.g., DV360 Seller API). Floor prices and terms are set per deal.
+costOptimization:
+  - strategy: Bid Filtering Configuration
+    description: Demand partners should configure bid request filters in the DSP UI
+      to receive only relevant inventory, reducing wasted processing on non-competitive
+      requests and improving win rates.
+  - strategy: Sandbox Environment Testing
+    description: Use the sandbox environment (sand-bidder.triplelift.net) to validate
+      integrations before production to avoid spend on misconfigured campaigns.
+  - strategy: Production Ramp During Business Hours
+    description: TripleLift recommends ramping new production integrations during
+      US Eastern business hours to allow monitoring and fast issue resolution, reducing
+      potential wasted spend from misconfigured bidders.
+  - strategy: Creative Pre-Validation
+    description: Leverage TripleLift's automatic creative validation upon bid submission
+      to avoid bid rejections due to non-compliant assets, improving fill rates and
+      spend efficiency.
+  - strategy: Native Asset Compliance
+    description: Ensure all native ad assets (title ≤75 chars, description ≤200 chars,
+      advertiser name ≤25 chars, logo ≥25px) comply with specifications before campaign
+      launch to prevent creative rejections that waste budget.
+  - strategy: Deal ID Activation via DSP Seller APIs
+    description: Activate TripleLift deals directly through DSP Seller APIs (e.g.,
+      DV360) to streamline PMP deal setup and reduce manual configuration overhead
+      that can delay campaign starts.
+notes:
+  - No publicly disclosed API access fees or subscription tiers
+  - All financial terms require direct negotiation with TripleLift
+  - Third-party estimates place managed service minimums at $5,000/month but these
+    are not officially confirmed by TripleLift
+  - For official pricing and commercial terms contact triplelift.com/contact-us/

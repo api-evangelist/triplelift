@@ -1,0 +1,44 @@
+name: TripleLift Plans and Pricing
+description: TripleLift does not publish self-serve pricing tiers publicly. Access
+  to the TripleLift Exchange (TLX) and Supply Publisher APIs is provisioned through
+  direct partnership agreements. Pricing is negotiated based on inventory volume,
+  campaign scale, and integration type. Demand partners (DSPs) and supply partners
+  (publishers/SSPs) must contact TripleLift to obtain credentials and onboard.
+plans:
+  - name: Demand Partner Integration
+    description: Access for DSPs and buyers to participate in TripleLift's native,
+      banner, video, and CTV exchange via OpenRTB. Includes sandbox environment for
+      testing, DSP UI access for instance and profile configuration, creative approval,
+      and reporting dashboards.
+    url: https://triplelift.com/contact-us/
+    pricing: Negotiated — contact TripleLift
+    features:
+      - Real-time bidding via OpenRTB 2.x
+      - Native Ads API (OpenRTB Native 1.2)
+      - Sandbox environment at sand-bidder.triplelift.net
+      - DSP UI for instance and bid filter management
+      - User sync endpoints
+      - Creative submission and validation
+      - Win notification support
+      - Privacy compliance (GDPR, CCPA, ePrivacy)
+      - SKAdNetwork support
+  - name: Supply Partner / Publisher Integration
+    description: Access for publishers and supply partners to monetize inventory through
+      TripleLift's native SSP. Includes publisher network reporting API, CTV publisher
+      reporting, and Prebid integration support.
+    url: https://supply-docs.triplelift.com/reference/introduction
+    pricing: Negotiated — contact TripleLift
+    features:
+      - Publisher Network Report API
+      - CTV Publisher Network Report API
+      - Synchronous and asynchronous query support
+      - Prebid.js and Prebid Server adapters
+      - iOS and Android SDK support
+      - Header bidding wrapper integration
+      - Deal ID targeting and activation
+      - First-party audience targeting
+notes:
+  - Pricing is enterprise/negotiated with no public self-serve tiers
+  - Sandbox credentials provided by TripleLift representative
+  - Creative approval has no additional fee
+  - Implementation costs estimated at $2,000–$10,000 (third-party estimates; not officially published)
