@@ -73,10 +73,19 @@
       "description": "An optimist's perspective on retail media strategies and opportunities for the holiday advertising season."
     },
     {
-      "title": "Creative Testing Insights – What We've Learned This Year",
+      "title": "Creative Testing Insights \u2013 What We've Learned This Year",
       "url": "https://triplelift.com/resources/blog/creative-testing-insights-what-weve-learned-this-year/",
       "date": "2025-09-25",
       "description": "Insights and lessons learned from creative testing across programmatic advertising campaigns throughout the year."
     }
-  ]
+  ],
+  "repo": "triplelift",
+  "feeds": [
+    {
+      "source": "https://www.linkedin.com/company/triplelift/",
+      "error": "HTTPError"
+    }
+  ],
+  "post_count": 0,
+  "fetched": "2026-06-14T20:42:17Z"
 }
