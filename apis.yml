@@ -6,7 +6,7 @@ description: TripleLift is a programmatic advertising company specializing in na
   APIs for demand and supply partners, publisher network reporting, connected TV (CTV)
   advertising, and mobile SDKs for iOS and Android.
 type: Index
-image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
 url: https://raw.githubusercontent.com/api-evangelist/triplelift/refs/heads/main/apis.yml
 created: '2026-06-13'
 modified: '2026-06-13'
@@ -26,7 +26,7 @@ apis:
       specifications for demand partners to participate in native, banner, and video
       ad auctions. Supports bid request and response objects, user sync, win notifications,
       privacy compliance (GDPR, CCPA), and SKAdNetwork for iOS attribution.
-    image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://docs.triplelift.com
     baseURL: https://tlx.3lift.com
     tags:
@@ -46,7 +46,7 @@ apis:
       connected TV publisher network reports, and integration management. Provides
       synchronous and asynchronous query capabilities with rate limiting and versioned
       endpoints (v1.0 through v1.3).
-    image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+    image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://supply-docs.triplelift.com/reference/introduction
     baseURL: https://supply-docs.triplelift.com
     tags:
