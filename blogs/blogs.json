@@ -1,91 +1,18 @@
 {
-  "meta": {
-    "provider": "triplelift",
-    "name": "TripleLift",
-    "url": "https://triplelift.com/resources/blog/",
-    "fetched": "2026-06-13"
-  },
-  "posts": [
-    {
-      "title": "Programmatic's New Power Couple: TripleLift and Epsilon Audiences",
-      "url": "https://triplelift.com/resources/blog/programmatics-new-power-couple-triplelift-and-epsilon-audiences/",
-      "date": "2026-06-03",
-      "description": "A partnership between TripleLift and Epsilon focusing on audience capabilities within programmatic advertising."
-    },
-    {
-      "title": "TripleLift Partners with Leading Measurement Providers to Elevate Advertiser Success",
-      "url": "https://triplelift.com/resources/blog/triplelift-partners-with-leading-measurement-providers-to-elevate-advertiser-success/",
-      "date": "2026-05-28",
-      "description": "TripleLift announces partnerships with leading measurement providers to improve advertiser outcomes."
-    },
-    {
-      "title": "Introducing TL Spark, the Agentic Intelligence Layer for Outcome-Driven Advertising",
-      "url": "https://triplelift.com/resources/blog/introducing-tl-spark-the-agentic-intelligence-layer-for-outcome-driven-advertising/",
-      "date": "2026-04-21",
-      "description": "Announcement of TL Spark, an agentic intelligence layer designed for outcome-driven programmatic advertising."
-    },
-    {
-      "title": "A Recipe For Offsite Innovation: Criteo Commerce Audiences Atop TripleLift Curation",
-      "url": "https://triplelift.com/resources/blog/a-recipe-for-offsite-innovation-criteo-commerce-audiences-atop-triplelift-curation/",
-      "date": "2026-04-16",
-      "description": "Exploring offsite retail media innovation combining Criteo commerce audiences with TripleLift curation."
-    },
-    {
-      "title": "The Shoulder Strategy: Winning on Soccer's Biggest Stage",
-      "url": "https://triplelift.com/resources/blog/the-shoulder-strategy-winning-on-soccers-biggest-stage/",
-      "date": "2026-04-06",
-      "description": "Advertising strategy insights for winning on major soccer events using shoulder programming."
-    },
-    {
-      "title": "TripleLift and Acxiom Announce Strategic Data Partnership",
-      "url": "https://triplelift.com/resources/blog/triplelift-and-acxiom-announce-strategic-data-partnership/",
-      "date": "2026-03-30",
-      "description": "TripleLift and Acxiom announce a strategic data partnership to enhance targeting capabilities."
-    },
-    {
-      "title": "Lessons in CTV Creative Innovation from TripleLift and TelevisaUnivision",
-      "url": "https://triplelift.com/resources/blog/lessons-in-ctv-creative-innovation-from-triplelift-and-televisaunivision/",
-      "date": "2026-01-27",
-      "description": "Key learnings in connected TV creative innovation from a collaboration between TripleLift and TelevisaUnivision."
-    },
-    {
-      "title": "Takeaways from CES 2026 for Publishers and Advertisers",
-      "url": "https://triplelift.com/resources/blog/takeaways-from-ces-2026-for-publishers-and-advertisers/",
-      "date": "2026-01-14",
-      "description": "Key insights and trends from CES 2026 relevant to publishers and advertisers in the programmatic space."
-    },
-    {
-      "title": "TripleLift and Cint Partner to Offer Cookieless Brand Measurement",
-      "url": "https://triplelift.com/resources/blog/triplelift-and-cint-partner-to-offer-cookieless-brand-measurement/",
-      "date": "2025-12-16",
-      "description": "TripleLift partners with Cint to provide cookieless brand measurement solutions for advertisers."
-    },
-    {
-      "title": "Creative Is Your Biggest Performance Driver, But Most Teams Can't Scale It",
-      "url": "https://triplelift.com/resources/blog/scaling-creative-guide/",
-      "date": "2025-10-02",
-      "description": "A guide on how creative is the biggest performance driver in advertising and strategies for scaling creative production."
-    },
-    {
-      "title": "The Optimist's Guide to Retail Media for the Holiday Season",
-      "url": "https://triplelift.com/resources/blog/the-optimists-guide-to-retail-media-for-the-holiday-season/",
-      "date": "2025-09-25",
-      "description": "An optimist's perspective on retail media strategies and opportunities for the holiday advertising season."
-    },
-    {
-      "title": "Creative Testing Insights \u2013 What We've Learned This Year",
-      "url": "https://triplelift.com/resources/blog/creative-testing-insights-what-weve-learned-this-year/",
-      "date": "2025-09-25",
-      "description": "Insights and lessons learned from creative testing across programmatic advertising campaigns throughout the year."
-    }
-  ],
   "repo": "triplelift",
   "feeds": [
+    {
+      "source": "https://triplelift.com/feed/",
+      "feed_url": "https://triplelift.com/feed/",
+      "title": "",
+      "saved": 4,
+      "method": "feed"
+    },
     {
       "source": "https://www.linkedin.com/company/triplelift/",
       "error": "HTTPError"
     }
   ],
-  "post_count": 0,
-  "fetched": "2026-06-14T20:42:17Z"
+  "fetched": "2026-06-27T12:03:07Z",
+  "post_count": 5
 }
