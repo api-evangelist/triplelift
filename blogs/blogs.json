@@ -5,14 +5,17 @@
       "source": "https://triplelift.com/feed/",
       "feed_url": "https://triplelift.com/feed/",
       "title": "",
-      "saved": 4,
+      "saved": 0,
       "method": "feed"
     },
     {
       "source": "https://www.linkedin.com/company/triplelift/",
-      "error": "HTTPError"
+      "feed_url": "https://www.linkedin.com/company/triplelift/",
+      "title": "",
+      "saved": 0,
+      "method": "none"
     }
   ],
-  "fetched": "2026-06-27T12:03:07Z",
-  "post_count": 5
+  "fetched": "2026-07-11T11:50:51Z",
+  "post_count": 50
 }
