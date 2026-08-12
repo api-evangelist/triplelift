@@ -1,42 +1,131 @@
 name: TripleLift Rate Limits
-description: TripleLift applies rate limiting to its Supply Publisher API. The Exchange
-  (TLX) RTB API enforces a strict bidder response timeout of 100ms — demand partners
-  must respond to bid requests within this window or be timed out. Specific numeric
-  rate limits for the REST reporting APIs are not publicly disclosed and are governed
-  by partner agreement.
-rateLimits:
-  - api: TripleLift Exchange (TLX) RTB API
-    type: Response Timeout
-    limit: 100ms
-    description: Demand partners (DSPs) must respond to bid requests within 100 milliseconds.
-      Bids arriving after this window are timed out and not considered in the auction.
-    enforcement: Hard timeout enforced by the exchange
-  - api: TripleLift Supply Publisher API
-    type: Request Rate Limiting
-    limit: Not publicly disclosed
-    description: The Supply Publisher API documentation references a Rate Limiting
-      section but does not publicly specify numeric thresholds. Rate limits are communicated
-      during partner onboarding and governed by the publisher agreement.
-    documentation: https://supply-docs.triplelift.com/reference/rate-limiting
-  - api: TripleLift Supply Publisher API — Querying Guidelines
-    type: Query Best Practices
-    limit: See Querying Guidelines documentation
-    description: TripleLift publishes querying guidelines for the Publisher Network
-      Report and CTV Publisher Network Report APIs covering recommended query patterns,
-      date range constraints, and pagination to avoid overloading reporting endpoints.
-    documentation: https://supply-docs.triplelift.com/reference/querying-guidelines
-assetLimits:
-  - asset: Native Ad Title
-    limit: 75 characters maximum
-  - asset: Native Ad Description
-    limit: 200 characters maximum
-  - asset: Native Ad Advertiser Name
-    limit: 25 characters maximum
-  - asset: Native Ad Logo
-    limit: 25px minimum width and height
-  - asset: Native Ad Image Ratio
-    limit: Must be within 0.5x to 2.0x of the target image ratio
+description: >-
+  TripleLift publishes hard numeric rate limits for the Reporting API, together with
+  the throttle response body and its backoff field. It publishes no rate limits for
+  the TLX exchange endpoint — RTB throughput is governed by the partner agreement and
+  the per-request OpenRTB tmax value the exchange sends on each bid request. The
+  critical operational fact for any automated client is that TripleLift signals
+  throttling with a JSON body field, not with a response header.
+generated: '2026-08-12'
+method: searched
+source: https://supply-docs.triplelift.com/reference/rate-limiting
+limit_count: 2
+rate_limits:
+  - api: TripleLift Reporting API
+    endpoint: https://reporting-api.triplelift.net/graphql
+    scope: per-api-key
+    window: 5 seconds
+    limit: 1
+    burst: none published
+    description: One request per five seconds, evaluated per unique API key.
+    source: https://supply-docs.triplelift.com/reference/rate-limiting
+  - api: TripleLift Reporting API
+    endpoint: https://reporting-api.triplelift.net/graphql
+    scope: per-api-key
+    window: 1 day
+    limit: 1000
+    burst: none published
+    description: >-
+      A maximum of 1,000 requests per day per API key. Combined with the 5-second
+      spacing, the daily cap is the binding constraint for any batch workload: a
+      client that never sleeps would exhaust the daily allowance in 83 minutes.
+    source: https://supply-docs.triplelift.com/reference/rate-limiting
+exhaustion:
+  status_code: 429
+  response_headers: []
+  retry_after_header: false
+  retry_after_field: 'retry-after (integer seconds, inside the JSON body)'
+  body_example: '{"path":"/graphql","retry-after":2,"error":"Forbidden","message":"Too many requests, please wait before trying again","timestamp":"2024-05-06T21:17:23.036+0000","status":429}'
+  note: >-
+    TripleLift returns NO X-RateLimit-*, NO RateLimit-* and NO RFC 7231 Retry-After
+    response header. The backoff value exists only as a hyphenated key inside the
+    JSON payload. Every off-the-shelf HTTP retry middleware looks at headers, so a
+    generic client will back off blindly or not at all. Any agent integrating this
+    API must parse the 429 body.
+  quirk: >-
+    The 429 body's own "error" field says "Forbidden" while its "status" field says
+    429. A client branching on the body's error string will classify throttling as
+    an authorization failure.
+result_limits:
+  - api: TripleLift Reporting API
+    surface: publisherNetworkReport
+    type: row limit
+    limit: 5000
+    behaviour: silent truncation — a query exceeding the limit returns data only up to the limit, with no error and no truncation flag
+    source: https://supply-docs.triplelift.com/reference/synchronous
+  - api: TripleLift Reporting API
+    surface: ctvPublisherNetworkReport
+    type: row limit
+    limit: 5000
+    behaviour: silent truncation
+    source: https://supply-docs.triplelift.com/reference/synchronous
+  - api: TripleLift Reporting API
+    surface: synchronous queries
+    type: default page size
+    limit: 50
+    parameter: size (cannot exceed the row limit)
+    source: https://supply-docs.triplelift.com/reference/synchronous
+  - api: TripleLift Reporting API
+    surface: asynchronous CSV download
+    type: payload size
+    limit: 400 MB
+    behaviour: reports larger than 400MB fail
+    source: https://supply-docs.triplelift.com/reference/asynchronous
+  - api: TripleLift Reporting API
+    surface: asyncEmailPublisherNetworkReport
+    type: email size
+    limit: 10 MB
+    behaviour: emails exceeding the limit fail to send
+    source: https://supply-docs.triplelift.com/reference/asynchronous
+  - api: TripleLift Reporting API
+    surface: asynchronous download link
+    type: URL time-to-live
+    limit: 30 minutes
+    behaviour: the pre-signed S3 URL expires 30 minutes after it is returned
+    source: https://supply-docs.triplelift.com/reference/asynchronous
+data_window_limits:
+  - dimension: YMD (daily)
+    retention: 15 months
+    source: https://supply-docs.triplelift.com/reference/publishernetworkreport
+  - dimension: HOUR (hourly)
+    retention: from 00:00 UTC yesterday
+    source: https://supply-docs.triplelift.com/reference/publishernetworkreport
+  - note: >-
+      Current-day data is not real time; the first hour of a day can generally be
+      expected by 10:00 UTC.
+    source: https://supply-docs.triplelift.com/reference/faq
+query_sizing_guidance:
+  url: https://supply-docs.triplelift.com/reference/querying-guidelines
+  factors:
+    - Date range — wider ranges produce larger reports; use the asynchronous endpoints for significant ranges.
+    - Number of dimensions — results are grouped by dimension, so more dimensions means more rows.
+    - Dimension cardinality — DOMAIN is very high cardinality and can multiply row counts by 100x or more.
+    - Metrics — add columns, not rows; lower impact on report size.
+    - Filters — greater specificity reduces report size.
+  implicit_rollup: >-
+    Any query including DOMAIN silently rolls rows contributing under 0.1% of total
+    renders into a single row named "Other". Opt out with useThreshold.
+exchange:
+  api: TripleLift Exchange (TLX)
+  endpoint: 'https://tlx.3lift.com/s2s/auction?supplier_id=<id>'
+  published_limits: none
+  timeout:
+    mechanism: OpenRTB tmax
+    documented_as: >-
+      "Maximum time in milliseconds that the exchange allows for bids to be received
+      to avoid timing out" — an integer field on each bid request, marked optional in
+      TripleLift's supported-object table.
+    fixed_value_published: false
+    source: https://docs.triplelift.com/docs/openrtb-25-1
+  note: >-
+    A previous round of this artifact asserted a fixed 100ms bidder timeout and a
+    table of native creative asset limits (title 75 chars, description 200 chars,
+    advertiser name 25 chars, logo 25px, image ratio 0.5x–2.0x). None of those values
+    appears anywhere in TripleLift's current published documentation, and they could
+    not be re-sourced on 2026-08-12. They have been removed rather than carried
+    forward unattributed. What TripleLift does publish is tmax, which means the
+    timeout is communicated per bid request rather than fixed.
 notes:
-  - Specific numeric API rate limits are not publicly documented
-  - RTB bidder timeout of 100ms is the key operational constraint for demand partners
-  - Production integrations are recommended to be ramped during US Eastern business hours
+  - The Reporting API is the only TripleLift surface with published numeric limits.
+  - Throttling is signalled in the body, not in headers — this is the single most important integration detail in this file.
+  - Two separate limits silently truncate results rather than erroring (the 5,000-row cap and the DOMAIN threshold rollup), so a correct client must reconcile totalRows against rows returned and check for an "Other" domain row.

@@ -1,0 +1,125 @@
+name: TripleLift Reporting API Changelog
+description: >-
+  TripleLift publishes a dated changelog for the Reporting API on its supplier
+  documentation site. Ten entries are indexed. The overwhelming pattern is additive
+  — new report dimensions and metrics — with a single breaking rename. No changelog
+  exists for the TLX exchange endpoint or for the platform federated API.
+generated: '2026-08-12'
+method: searched
+source: https://supply-docs.triplelift.com/llms.txt
+url: https://supply-docs.triplelift.com/changelog
+scope: TripleLift Reporting API (GraphQL) only
+scheme: dated entries, no semantic version numbers
+current_version: unversioned
+machine_readable: false
+feed: none published
+entry_count_indexed: 10
+window: 2025-05-26 to 2026-06-22
+entries:
+  - date: '2026-06-22'
+    url: https://supply-docs.triplelift.com/changelog/2026-06-22
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport, ctvPublisherNetworkReport]
+    highlights:
+      - Added dimension AD_SOLUTION — the TripleLift advertising solution, which may combine format, connection type, video placement and template.
+  - date: '2026-06-01'
+    url: https://supply-docs.triplelift.com/changelog/2026-06-01
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport, ctvPublisherNetworkReport]
+    highlights:
+      - Added SECTOR (geographic sector/continent of the ad request).
+      - Added REGION (ISO 3166-2 subdivisions).
+      - Added JOUNCE_CLASSIFICIATION — a supply path quality label defined by Jounce Media. Note the misspelling is TripleLift's own and is the literal dimension name.
+      - Added CPC metric (Revenue / Clicks).
+      - CTV only — added DMA, SSAI_VENDOR and TL_WINS.
+  - date: '2026-05-18'
+    url: https://supply-docs.triplelift.com/changelog/2026-05-18
+    breaking: false
+    type: additions
+    surfaces: [ctvPublisherNetworkReport]
+    highlights:
+      - Added APP_DEVELOPER_DOMAIN.
+      - Added DIRECT_PAYMENT — TRUE when TripleLift acts as clearing house and pays the publisher directly.
+      - Added EXTERNAL_CREATIVE_ID.
+  - date: '2026-03-31'
+    url: https://supply-docs.triplelift.com/changelog/2026-03-31
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport]
+    highlights:
+      - Added DIRECT_PAYMENT to the standard publisher report.
+  - date: '2026-03-16'
+    url: https://supply-docs.triplelift.com/changelog/2026-03-16
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport]
+    highlights:
+      - Added DMA (Nielsen Designated Market Area).
+      - Added TL_WINS — ad requests that resulted in a won auction with TripleLift, prior to the publisher auction.
+  - date: '2026-01-12'
+    url: https://supply-docs.triplelift.com/changelog/2026-11-12
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport, ctvPublisherNetworkReport]
+    highlights:
+      - Added CREATIVE_DURATION (seconds, as declared by buyer or creative source).
+      - Added DEAL_TYPE (Programmatic Guaranteed, PMP, etc.; null for Open Exchange).
+      - Added WINS metric (ad requests resulting in a won auction with the publisher).
+      - Added RENDER_RATE metric (RENDERED / WINS).
+    note: >-
+      The index in llms.txt lists this entry as 2026-01-12 but its URL slug is
+      /changelog/2026-11-12. The date shown and the date in the permalink disagree;
+      recorded as published rather than reconciled.
+  - date: '2025-11-13'
+    url: https://supply-docs.triplelift.com/changelog/release-candidate
+    breaking: true
+    type: breaking-rename
+    surfaces: [publisherNetworkReport, ctvPublisherNetworkReport]
+    highlights:
+      - Renamed dimension dsp_seat_id to dsp_seat.
+      - Changed the buyer seat ID data type from integer to string, fixing a defect where the dimension failed when used as an IdFilter.
+      - dsp_seat is now the dimension name and the NameFilter.
+    note: >-
+      The only breaking change in the published history. It renamed and retyped a
+      field first shipped 2025-05-26, and was announced at the time of the change
+      with no deprecation window and no sunset date. The entry is filed under the
+      slug "release-candidate" rather than a date, so the permalink itself carries
+      no date.
+  - date: '2025-08-12'
+    url: https://supply-docs.triplelift.com/changelog/2025-08-12
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport]
+    highlights:
+      - Added external_creative_id — the crid (string) from a buyer's OpenRTB bid response.
+  - date: '2025-06-04'
+    url: https://supply-docs.triplelift.com/changelog/2025-06-04
+    breaking: false
+    type: additions
+    surfaces: [ctvPublisherNetworkReport]
+    highlights:
+      - Added dsp_seat_id, the buyer seat ID declared in the OpenRTB seatbid object. Later renamed to dsp_seat (see 2025-11-13).
+  - date: '2025-05-26'
+    url: https://supply-docs.triplelift.com/changelog/2025-05-26
+    breaking: false
+    type: additions
+    surfaces: [publisherNetworkReport]
+    highlights:
+      - Added dsp_seat_id to the standard publisher report. Later renamed to dsp_seat (see 2025-11-13).
+observations:
+  - >-
+    Cadence is roughly every six to eight weeks and has been sustained for over a
+    year, which is a real signal of an actively maintained API.
+  - >-
+    Every entry describes report dimensions and metrics. Not one entry describes a
+    new operation, an auth change, a rate-limit change or a lifecycle event, which
+    matches the shape of the surface: one GraphQL endpoint whose schema grows
+    sideways rather than a REST API that grows new paths.
+  - >-
+    Dimension naming is inconsistent across entries — SCREAMING_SNAKE in newer
+    entries, lower_snake in 2025 entries — and one shipped dimension name contains
+    a typo (JOUNCE_CLASSIFICIATION). Because the schema is not introspectable
+    anonymously, a consumer cannot resolve casing from the contract and must trust
+    the changelog prose.

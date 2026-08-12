@@ -1,0 +1,162 @@
+name: TripleLift Authentication
+description: >-
+  TripleLift runs three distinct authentication regimes across its API surface.
+  The Reporting API uses a paired static API key plus a monthly-rotating JWT, both
+  sent as headers on every request. The TripleLift platform (app.triplelift.com and
+  the federated GraphQL gateway) uses an Auth0 OpenID Connect tenant with
+  authorization_code + PKCE and a large scope catalog. The TLX exchange endpoint
+  is not authenticated with a credential at all — a supplier is identified by a
+  supplier_id query parameter issued during onboarding and by IP/host allowlisting.
+generated: '2026-08-12'
+method: searched
+source: https://supply-docs.triplelift.com/reference/authorization
+schemes:
+  - id: reporting-api-key
+    api: TripleLift Reporting API
+    type: apiKey
+    in: header
+    name: X-API-Key
+    required: true
+    description: >-
+      Static API key unique to the TripleLift member account. Does not expire, but
+      is invalidated whenever a new key is generated — and generating a new key
+      rotates it for EVERY user and program querying on behalf of that member
+      account, so key rotation is an account-wide breaking event with no per-client
+      isolation.
+    obtain:
+      - method: console
+        url: https://console.triplelift.com
+        steps: Reporting menu -> Reporting API -> "Current API Key" -> copy, or Generate New Key.
+      - method: api
+        endpoint: POST https://reporting-api.triplelift.net/generate-api-key
+        headers:
+          - 'X-API-Key: <current key>'
+          - 'Authorization: Bearer <jwt>'
+        body: '{"id": "<member id>", "overwriteExistingKey": true}'
+        note: Requires the existing key and a valid JWT — there is no unauthenticated bootstrap.
+  - id: reporting-jwt
+    api: TripleLift Reporting API
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    in: header
+    name: Authorization
+    required: true
+    description: >-
+      JSON Web Token that expires after one month and must be refreshed. Sent
+      alongside — not instead of — the X-API-Key header; both are required on
+      every request.
+    obtain:
+      - method: console
+        url: https://console.triplelift.com
+        steps: Reporting menu -> Reporting API -> "Current Token".
+      - method: api
+        endpoint: POST https://api.triplelift.com/login
+        body: '{"username": "<username>", "password": "<password>"}'
+        response_field: reporting_api_token
+        note: >-
+          Resource-owner password credentials over a plain JSON POST. There is no
+          client_credentials or service-account flow published for the Reporting
+          API, so an automated integration must store a human user's password to
+          refresh its token every month.
+    lifetime: 1 month
+    refresh: none published — re-POST /login
+  - id: platform-oidc
+    api: TripleLift Platform (app.triplelift.com, federated-api.prod.triplelift.net)
+    type: openIdConnect
+    openIdConnectUrl: https://auth.triplelift.net/.well-known/openid-configuration
+    issuer: https://auth.triplelift.net/
+    provider: Auth0
+    flows:
+      authorizationCode:
+        authorizationUrl: https://auth.triplelift.net/authorize
+        tokenUrl: https://auth.triplelift.net/oauth/token
+        refreshUrl: https://auth.triplelift.net/oauth/token
+        pkce: S256
+    audience: https://federated-api.prod.triplelift.net
+    grant_types_supported:
+      - client_credentials
+      - authorization_code
+      - refresh_token
+      - password
+      - implicit
+      - 'urn:ietf:params:oauth:grant-type:device_code'
+      - 'urn:ietf:params:oauth:grant-type:token-exchange'
+      - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+    token_endpoint_auth_methods_supported:
+      - client_secret_basic
+      - client_secret_post
+      - private_key_jwt
+      - none
+    id_token_signing_alg_values_supported:
+      - HS256
+      - RS256
+      - PS256
+    jwks_uri: https://auth.triplelift.net/.well-known/jwks.json
+    dpop_signing_alg_values_supported:
+      - ES256
+    revocation_endpoint: https://auth.triplelift.net/oauth/revoke
+    registration_endpoint: https://auth.triplelift.net/oidc/register
+    scopes: see scopes/triplelift-scopes.yml
+    description: >-
+      Discovered by probing, not from documentation — TripleLift publishes no
+      developer documentation for the platform API. app.triplelift.com 302s to the
+      Auth0 authorize endpoint and the redirect exposes the client_id, the audience
+      and the complete scope catalog.
+    documented: false
+  - id: mcp-oauth-wordpress
+    api: TripleLift WordPress MCP server
+    type: oauth2
+    issuer: https://triplelift.com
+    metadata: https://triplelift.com/.well-known/oauth-authorization-server
+    protected_resource: https://triplelift.com/wp-json/mcp/mcp-oauth-server
+    flows:
+      authorizationCode:
+        authorizationUrl: https://triplelift.com/oauth/authorize
+        tokenUrl: https://triplelift.com/oauth/token
+        refreshUrl: https://triplelift.com/oauth/token
+        pkce: S256
+    scopes:
+      mcp: Access the MCP server exposed by the triplelift.com WordPress site.
+    token_endpoint_auth_methods_supported:
+      - none
+    dynamic_client_registration: client_id_metadata_document
+    description: >-
+      A second, entirely separate OAuth authorization server on the marketing
+      domain, serving only the WordPress MCP endpoint. Unrelated to the platform
+      Auth0 tenant.
+  - id: tlx-supplier-id
+    api: TripleLift Exchange (TLX)
+    type: none
+    description: >-
+      The server-to-server OpenRTB endpoint carries no Authorization header. A
+      supply partner is identified by the supplier_id query parameter TripleLift
+      issues at onboarding — https://tlx.3lift.com/s2s/auction?supplier_id=123 —
+      with access otherwise controlled out of band by the partner agreement and
+      allowlisting. User-sync endpoints on eb2.3lift.com use a mid + dongle
+      parameter pair for the same purpose.
+    documented: true
+    docs: https://docs.triplelift.com/docs/supply-partners
+observations:
+  - No API surface at TripleLift uses a single credential. Every authenticated
+    surface requires either two headers (Reporting) or a full OIDC round trip
+    (platform).
+  - The Reporting API's account-wide key rotation and its password-grant JWT
+    refresh are the two weakest points in the auth design for automated agents.
+  - There is no published machine-readable security scheme document (no OpenAPI,
+    no oauth-protected-resource metadata on the API hosts), so an agent cannot
+    discover any of this without reading the human docs.
+x-evidence:
+  - url: https://supply-docs.triplelift.com/reference/authorization.md
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://auth.triplelift.net/.well-known/openid-configuration
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://triplelift.com/.well-known/oauth-authorization-server
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://app.triplelift.com/
+    http_status: 302
+    fetched: '2026-08-12'
+    note: Location header names the Auth0 authorize endpoint, audience and scopes.

@@ -1,0 +1,221 @@
+name: TripleLift OAuth Scopes
+description: >-
+  TripleLift publishes no scopes reference page. This catalog was read off two
+  live, anonymous, unauthenticated responses: the Auth0 authorize redirect emitted
+  by https://app.triplelift.com/ (which carries the platform's full requested scope
+  set in its Location query string), and the two OAuth metadata documents served on
+  auth.triplelift.net and triplelift.com. Every scope string below appears verbatim
+  in one of those responses. Descriptions are DERIVED from the scope naming
+  convention (<service>:<resource>.<action>) and are labelled as such — TripleLift
+  documents none of them.
+generated: '2026-08-12'
+method: probed
+source: https://app.triplelift.com/ (302 Location -> https://auth.triplelift.net/authorize?...&scope=...)
+docs: none published
+authorization_servers:
+  - issuer: https://auth.triplelift.net/
+    audience: https://federated-api.prod.triplelift.net
+    metadata: https://auth.triplelift.net/.well-known/openid-configuration
+    provider: Auth0
+    standard_scopes_supported:
+      - openid
+      - profile
+      - offline_access
+      - name
+      - given_name
+      - family_name
+      - nickname
+      - email
+      - email_verified
+      - picture
+      - created_at
+      - identities
+      - phone
+      - address
+  - issuer: https://triplelift.com
+    metadata: https://triplelift.com/.well-known/oauth-authorization-server
+    resource: https://triplelift.com/wp-json/mcp/mcp-oauth-server
+    scopes_supported:
+      - mcp
+scopes:
+  - scope: openid
+    service: auth0
+    description: Standard OpenID Connect scope; requests an ID token.
+    method: probed
+  - scope: profile
+    service: auth0
+    description: Standard OIDC profile claims.
+    method: probed
+  - scope: email
+    service: auth0
+    description: Standard OIDC email claim.
+    method: probed
+  - scope: offline_access
+    service: auth0
+    description: Standard OIDC scope requesting a refresh token.
+    method: probed
+  - scope: members.read
+    service: platform
+    description: 'DERIVED: read TripleLift member (account) records.'
+  - scope: users
+    service: platform
+    description: 'DERIVED: user administration.'
+  - scope: users.read
+    service: platform
+    description: 'DERIVED: read user records.'
+  - scope: member_read
+    service: platform
+    description: 'DERIVED: legacy member read scope, coexisting with members.read.'
+  - scope: legacy-tool-access
+    service: platform
+    description: 'DERIVED: access to superseded TripleLift tooling retained for compatibility.'
+  - scope: read_client_secret
+    service: platform
+    description: 'DERIVED: read an application client secret.'
+  - scope: avails_read
+    service: platform
+    description: 'DERIVED: read inventory availability (avails) forecasts.'
+  - scope: 'read:segments'
+    service: segments
+    description: 'DERIVED: read audience segments.'
+  - scope: 'read:publisher_segments'
+    service: segments
+    description: 'DERIVED: read publisher-owned segments.'
+  - scope: 'block:publisher_segments'
+    service: segments
+    description: 'DERIVED: block a publisher segment.'
+  - scope: 'unblock:publisher_segments'
+    service: segments
+    description: 'DERIVED: unblock a publisher segment.'
+  - scope: 'read:segment_blockers'
+    service: segments
+    description: 'DERIVED: read segment blocking rules.'
+  - scope: 'add:segment_blockers'
+    service: segments
+    description: 'DERIVED: create segment blocking rules.'
+  - scope: 'remove:segment_blockers'
+    service: segments
+    description: 'DERIVED: delete segment blocking rules.'
+  - scope: 'read:domains'
+    service: domains
+    description: 'DERIVED: read domain records.'
+  - scope: 'create:domains'
+    service: domains
+    description: 'DERIVED: create domain records.'
+  - scope: sitelists
+    service: sitelists
+    description: 'DERIVED: full access to site lists (inventory allow/block lists).'
+  - scope: sitelists.read
+    service: sitelists
+    description: 'DERIVED: read the caller''s site lists.'
+  - scope: sitelists.read.all
+    service: sitelists
+    description: 'DERIVED: read all site lists, not only the caller''s.'
+  - scope: 'deals-api:graphql.read'
+    service: deals-api
+    description: 'DERIVED: read access to the deals GraphQL subgraph.'
+  - scope: 'deals-api:deal.*'
+    service: deals-api
+    description: 'DERIVED: full CRUD on deals (PMP/programmatic guaranteed).'
+  - scope: 'buyer-api:buyers.read'
+    service: buyer-api
+    description: 'DERIVED: read buyer records.'
+  - scope: 'buyer-api:seats.read'
+    service: buyer-api
+    description: 'DERIVED: read DSP seat records.'
+  - scope: 'buyer-api:members.read'
+    service: buyer-api
+    description: 'DERIVED: read buyer-side member records.'
+  - scope: 'creative-service-api:graphql.read'
+    service: creative-service-api
+    description: 'DERIVED: read access to the creative GraphQL subgraph.'
+  - scope: 'creative-service-api:campaign.manage'
+    service: creative-service-api
+    description: 'DERIVED: create and manage creative campaigns.'
+  - scope: 'user-mgmt-api:members.read'
+    service: user-mgmt-api
+    description: 'DERIVED: read members through the user-management service.'
+  - scope: 'user-mgmt-api:*.*'
+    service: user-mgmt-api
+    description: 'DERIVED: wildcard — every resource and every action on the user-management service.'
+  - scope: 'reporting-api:report.*'
+    service: reporting-api
+    description: 'DERIVED: full access to reports. This is the platform-token equivalent of the X-API-Key + JWT pair used on reporting-api.triplelift.net.'
+  - scope: 'advertiser-connect:advertiser.read'
+    service: advertiser-connect
+    description: 'DERIVED: read advertiser records.'
+  - scope: 'advertiser-connect:advertiser.update'
+    service: advertiser-connect
+    description: 'DERIVED: update advertiser records.'
+  - scope: 'advertiser-connect:segment.read'
+    service: advertiser-connect
+    description: 'DERIVED: read advertiser-connect segments.'
+  - scope: 'advertiser-connect:connect-request.*'
+    service: advertiser-connect
+    description: 'DERIVED: full CRUD on data-connection requests.'
+  - scope: 'advertiser-connect:data-connection.read'
+    service: advertiser-connect
+    description: 'DERIVED: read established data connections.'
+  - scope: 'margin-management-api:deal_fee.read'
+    service: margin-management-api
+    description: 'DERIVED: read per-deal fees.'
+  - scope: 'margin-management-api:fee.create'
+    service: margin-management-api
+    description: 'DERIVED: create fees.'
+  - scope: 'margin-management-api:fee.update'
+    service: margin-management-api
+    description: 'DERIVED: update fees.'
+  - scope: 'margin-management-api:fee.delete'
+    service: margin-management-api
+    description: 'DERIVED: delete fees.'
+  - scope: 'margin-management-api:fee_model_value.read'
+    service: margin-management-api
+    description: 'DERIVED: read fee-model values.'
+  - scope: 'margin-management-api:fee_model_value.create'
+    service: margin-management-api
+    description: 'DERIVED: create fee-model values.'
+  - scope: 'margin-management-api:fee_model_value.update'
+    service: margin-management-api
+    description: 'DERIVED: update fee-model values.'
+  - scope: 'margin-management-api:fee_model_value.delete'
+    service: margin-management-api
+    description: 'DERIVED: delete fee-model values.'
+  - scope: 'tlsuite:access'
+    service: tlsuite
+    description: 'DERIVED: baseline access to TripleLift Suite.'
+  - scope: 'tlsuite:segments_reporting'
+    service: tlsuite
+    description: 'DERIVED: segment reporting in TripleLift Suite.'
+  - scope: 'tlsuite:onboarded_data'
+    service: tlsuite
+    description: 'DERIVED: access onboarded first-party data.'
+  - scope: 'tlsuite:custom_segments'
+    service: tlsuite
+    description: 'DERIVED: manage custom segments.'
+  - scope: mcp
+    service: wordpress-mcp
+    description: Access the MCP server on the triplelift.com WordPress site. Published in that host's own authorization-server metadata.
+    method: probed
+scope_count: 51
+notes:
+  - >-
+    Two wildcard scopes are requested by the first-party console on every login —
+    user-mgmt-api:*.* and deals-api:deal.* — alongside advertiser-connect:connect-request.*
+    and reporting-api:report.*. Wildcards in a requested scope set mean the token
+    the console holds is materially broader than any documented least-privilege
+    grant, and there is no published scope reference a partner could consult to
+    request less.
+  - >-
+    None of these scopes appear in TripleLift's public documentation. The Reporting
+    API — the one API TripleLift does document — does not use OAuth at all, so a
+    documented partner never encounters this catalog.
+x-evidence:
+  - url: https://app.triplelift.com/
+    http_status: 302
+    fetched: '2026-08-12'
+  - url: https://auth.triplelift.net/.well-known/openid-configuration
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://triplelift.com/.well-known/oauth-authorization-server
+    http_status: 200
+    fetched: '2026-08-12'

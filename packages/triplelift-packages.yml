@@ -1,0 +1,141 @@
+name: TripleLift Packages and SDKs
+description: >-
+  Every first-party TripleLift distributable found across npm, Maven Central, PyPI,
+  RubyGems, CocoaPods and the github.com/triplelift organisation. The finding is
+  decay: TripleLift has published first-party client code, but nothing has shipped
+  since 2019 on npm and 2018 on Maven Central, while the API those libraries would
+  wrap has been changing every six to eight weeks through 2026. There is no client
+  library for the Reporting API — the API TripleLift actually documents — in any
+  language.
+generated: '2026-08-12'
+method: searched
+source: registry.npmjs.org, search.maven.org, pypi.org, rubygems.org, trunk.cocoapods.org, api.github.com/orgs/triplelift
+packages:
+  - name: '@triplelift/components'
+    registry: npm
+    url: https://www.npmjs.com/package/@triplelift/components
+    official: true
+    language: JavaScript
+    description: TripleLift React Components.
+    version: 4.0.3
+    published: '2019-08-08'
+    dist_tags:
+      latest: 4.0.3
+      next: 4.3.0-rc1
+      'true': 4.1.0
+    release_count: 50
+    repository: https://github.com/triplelift-internal/components
+    note: >-
+      Published under TripleLift's own npm scope, so first-party. Last release
+      2019-08-08 — seven years stale. The dist-tag table is itself a symptom of
+      abandonment: `next` (4.3.0-rc1) and a stray boolean-named tag `true` (4.1.0)
+      both point at versions AHEAD of `latest`, meaning an unfinished release train
+      was left in place and never promoted. The source repository is in the private
+      triplelift-internal organisation and is not publicly readable.
+  - name: 'com.triplelift.gdpr:consent-string-parser'
+    registry: maven-central
+    url: https://central.sonatype.com/artifact/com.triplelift.gdpr/consent-string-parser
+    official: true
+    language: Java
+    description: Java implementation of the consent-string parser specified by the IAB GDPR Consent Framework.
+    version: 1.1.1
+    published: '2018-05-14'
+    repository: https://github.com/triplelift/IAB-Consent-String-Parser
+    note: >-
+      A genuine standards-implementation contribution, published under TripleLift's
+      own Maven group. Last release 2018-05-14. It implements TCF v1.1 consent
+      strings; IAB Europe replaced that framework with TCF v2.0 in 2020 and TCF
+      v2.2 in 2023, so the published artifact parses a consent format the industry
+      has retired. The source repo's last commit is 2020-05-13.
+  - name: triplelift-ios-sdk
+    registry: none
+    url: https://github.com/triplelift/triplelift-ios-sdk
+    official: true
+    language: Objective-C
+    description: TripleLift iOS native-ad SDK.
+    version: null
+    published: null
+    last_commit: '2014-09-02'
+    note: >-
+      Source-only. Not published to CocoaPods (trunk.cocoapods.org/api/v1/pods/TripleLift
+      returns 404), Swift Package Manager or any other registry, so version: null is
+      "checked, no registry distribution exists" rather than "not checked". Last
+      pushed 2014-09-02 — predates Swift's general adoption, ATS, and every modern
+      iOS privacy API including SKAdNetwork, which TripleLift documents support for
+      elsewhere. Not archived, so GitHub still presents it as live code.
+  - name: triplelift-android-sdk
+    registry: none
+    url: https://github.com/triplelift/triplelift-android-sdk
+    official: true
+    language: Java
+    description: TripleLift Android native-ad SDK.
+    version: null
+    published: null
+    last_commit: '2016-06-02'
+    note: >-
+      Source-only, no Maven Central or JitPack coordinate found. Last pushed
+      2016-06-02. Not archived.
+  - name: triple-android-sample
+    registry: none
+    url: https://github.com/triplelift/triple-android-sample
+    official: true
+    language: Java
+    description: Sample app for the Android SDK.
+    version: null
+    published: null
+    last_commit: '2016-02-09'
+  - name: prebid.js
+    registry: npm
+    url: https://www.npmjs.com/package/prebid.js
+    official: false
+    language: JavaScript
+    description: >-
+      Prebid.org's header-bidding library. TripleLift's bid adapter ships INSIDE
+      this package (tripleliftBidAdapter) — TripleLift maintains the adapter, but
+      the package is Prebid.org's, not TripleLift's.
+    version: 11.29.0
+    published: '2026-08-06'
+    note: >-
+      Included because it is how integrators actually consume TripleLift on the web,
+      and because it is the only actively-released code path in this file. official
+      is false: TripleLift does not own or publish the artifact. TripleLift's own
+      forks (github.com/triplelift/Prebid.js, /prebid-server) were last pushed in
+      2020 and are stale relative to upstream.
+counts:
+  total: 6
+  official: 5
+  with_registry_distribution: 2
+  official_with_registry_distribution: 2
+registries_checked:
+  - registry: npm
+    result: 'two hits (@triplelift/components official; prebid.js third-party)'
+  - registry: maven-central
+    result: one hit (com.triplelift.gdpr:consent-string-parser)
+  - registry: pypi
+    result: 404 — no TripleLift package
+  - registry: rubygems
+    result: empty search result
+  - registry: cocoapods
+    result: 404 — no TripleLift pod
+  - registry: nuget
+    result: no first-party package found
+  - registry: pkg.go.dev
+    result: no first-party module found
+  - registry: packagist
+    result: no first-party package found
+  - registry: crates.io
+    result: no first-party package found
+observations:
+  - >-
+    The most current first-party TripleLift release in any package registry is from
+    2019. The Reporting API changelog shows twelve months of continuous schema
+    change through 2026. Every first-party SDK predates the API surface it would be
+    used against, which is the abandonment signal this pipeline is designed to catch.
+  - >-
+    There is no SDK, client library, or generated stub for the Reporting API in any
+    language. TripleLift's own integration guidance for it is a cURL example and a
+    third-party desktop GraphQL client (Altair).
+  - >-
+    None of the twelve repositories in github.com/triplelift is marked archived, and
+    the newest push across the whole organisation is 2020-09-10. The org presents a
+    dozen live-looking repositories, all of them dormant for at least six years.

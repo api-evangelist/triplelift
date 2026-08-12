@@ -1,0 +1,69 @@
+name: TripleLift Trust Center
+description: >-
+  TripleLift operates a Trust Center at trust.triplelift.com. It is a single-page
+  JavaScript application on the Responsive (formerly RFPIO) platform: the served
+  HTML is 4KB, its entire body text is "Please enable JavaScript to continue using
+  this application", and no certification, framework, subprocessor list or policy
+  document appears in any machine-readable response. The Trust Center exists; its
+  contents are not readable by a machine.
+generated: '2026-08-12'
+method: probed
+source: https://trust.triplelift.com/
+trust_center:
+  url: https://trust.triplelift.com/
+  http_status: 200
+  title: Trust Center
+  platform: Responsive (RFPIO) Trust Center — profile-guest bundle
+  machine_readable: false
+  content_bytes_served: 4119
+  rendered_text: 'Trust Center Please enable JavaScript to continue using this application.'
+certifications: []
+certifications_note: >-
+  NONE READABLE. No SOC 2, ISO 27001, ISO 27017, PCI DSS, HIPAA, FedRAMP, TISAX or
+  CSA STAR claim appears in the Trust Center HTML, on triplelift.com, or in any
+  probed response. This records that nothing could be read — not that TripleLift
+  holds no certifications. Because no certification could be verified, no
+  Compliance pointer is emitted for this provider.
+frameworks_referenced_elsewhere:
+  - name: IAB Europe TCF (GDPR)
+    where: user-sync and OpenRTB Regs documentation
+    note: A privacy/consent framework, not a security certification.
+  - name: IAB CCPA Compliance Framework (us_privacy)
+    where: user-sync documentation
+  - name: IAB Global Privacy Platform (GPP)
+    where: user-sync documentation
+related_pages:
+  - url: https://triplelift.com/privacy/
+    http_status: 200
+    type: privacy policy
+  - url: https://triplelift.com/privacy-policy/
+    http_status: 200
+    type: privacy policy (alternate path)
+  - url: https://triplelift.com/security/
+    http_status: 404
+  - url: https://triplelift.com/trust/
+    http_status: 404
+  - url: https://triplelift.com/legal/
+    http_status: 404
+  - url: https://triplelift.com/terms/
+    http_status: 404
+gaps:
+  - >-
+    A Trust Center whose contents require a JavaScript runtime cannot be read by a
+    procurement bot, a security-questionnaire agent, or any automated vendor-risk
+    process — which is the audience a Trust Center exists to serve. The platform
+    supports guest access; the barrier here is rendering, not authorization.
+  - >-
+    No /.well-known/security.txt is served on any TripleLift host, so there is no
+    machine-discoverable security contact or disclosure policy pointing at the
+    Trust Center either.
+x-evidence:
+  - url: https://trust.triplelift.com/
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://triplelift.com/security/
+    http_status: 404
+    fetched: '2026-08-12'
+  - url: https://triplelift.com/.well-known/security.txt
+    http_status: 404
+    fetched: '2026-08-12'

@@ -1,0 +1,212 @@
+name: TripleLift Standards Conformance
+description: >-
+  Cross-cutting standards TripleLift conforms to, asserted from its own published
+  documentation and from live probes. TripleLift is an unusually standards-dense
+  provider on the ad-tech axis — it implements the full IAB Tech Lab stack — and
+  unusually standards-thin on the general web-API axis, publishing no OpenAPI, no
+  RFC 9457 errors and no RFC 8594 lifecycle headers.
+generated: '2026-08-12'
+method: searched
+source: https://docs.triplelift.com/llms.txt, https://supply-docs.triplelift.com/llms.txt, live probes 2026-08-12
+standards:
+  - id: openrtb-2x
+    name: IAB OpenRTB 2.x
+    conforms: true
+    evidence: >-
+      "The body of Triplelift request/responses follows the standard IAB's OpenRTB
+      2.x specification." Bid Request, Impression, Regs, Video, App, Content and
+      Bid Response objects are each documented as TripleLift's supported subset.
+    source: https://docs.triplelift.com/docs/openrtb-25-2
+  - id: openrtb-native-1.2
+    name: IAB OpenRTB Native Ads 1.2
+    conforms: true
+    evidence: TripleLift's native inventory is transacted through the OpenRTB Native Ads specification; native asset structures are documented against it.
+    source: https://docs.triplelift.com/docs/openrtb-25-1
+  - id: openrtb-2.6-content
+    name: IAB OpenRTB 2.6 Content Object
+    conforms: true
+    evidence: >-
+      The CTV reporting endpoints surface ORTB content-object dimensions and cite
+      the OpenRTB 2.6 content object and AdCOM 1.0 as their source.
+    source: https://supply-docs.triplelift.com/reference/faq
+  - id: adcom-1.0
+    name: IAB AdCOM 1.0
+    conforms: true
+    evidence: Cited alongside OpenRTB 2.6 as the source of the CTV content dimensions.
+    source: https://supply-docs.triplelift.com/reference/faq
+  - id: sellers-json
+    name: IAB Tech Lab sellers.json
+    conforms: true
+    evidence: 'Served at https://triplelift.com/sellers.json and https://3lift.com/sellers.json — HTTP 200, application/json, 1,254,586 bytes.'
+    method: probed
+    source: https://triplelift.com/sellers.json
+  - id: supply-chain-object
+    name: IAB OpenRTB SupplyChain object
+    conforms: true
+    evidence: >-
+      The reporting PUBLISHER_ID dimension is documented as "the sellers.json
+      identifier", tying reporting identity to the sellers.json / SupplyChain
+      transparency chain.
+    source: https://supply-docs.triplelift.com/reference/publishernetworkreport
+  - id: ads-txt
+    name: IAB ads.txt / app-ads.txt
+    conforms: false
+    evidence: 'https://triplelift.com/ads.txt and /app-ads.txt both return 404. Expected — ads.txt is published by publishers, not by an SSP; TripleLift''s obligation is sellers.json, which it meets.'
+    method: probed
+  - id: gdpr-tcf
+    name: IAB Europe Transparency & Consent Framework (GDPR)
+    conforms: true
+    evidence: >-
+      gdpr and gdpr_consent parameters are accepted on every user-sync endpoint;
+      the OpenRTB Regs object is documented. TripleLift also publishes a Java
+      implementation of the IAB GDPR consent-string parser.
+    source: https://docs.triplelift.com/docs/user-sync
+  - id: us-privacy
+    name: IAB CCPA Compliance Framework (us_privacy string)
+    conforms: true
+    evidence: us_privacy parameter accepted on /xuid, /getuid and /sync.
+    source: https://docs.triplelift.com/docs/user-sync
+  - id: gpp
+    name: IAB Global Privacy Platform (GPP)
+    conforms: true
+    evidence: gpp parameter accepted on every user-sync endpoint alongside the legacy gdpr and us_privacy strings.
+    source: https://docs.triplelift.com/docs/user-sync
+  - id: skadnetwork
+    name: Apple SKAdNetwork
+    conforms: true
+    evidence: A dedicated SKAdNetwork guide is published for iOS attribution.
+    source: https://docs.triplelift.com/docs/skadnetwork
+  - id: prebid
+    name: Prebid.js / Prebid Server
+    conforms: true
+    evidence: >-
+      TripleLift publishes wrapper/header-bidding integration documentation and
+      maintains a bid adapter in the Prebid.js and Prebid Server projects.
+    source: https://docs.triplelift.com/docs/wrapper-integration
+  - id: graphql
+    name: GraphQL over HTTP
+    conforms: true
+    evidence: >-
+      The Reporting API is GraphQL over HTTP POST and its own cURL guide points at
+      the graphql.org "serving over HTTP" specification. The platform gateway is an
+      Apollo Federation endpoint.
+    source: https://supply-docs.triplelift.com/reference/curl
+  - id: graphql-introspection
+    name: GraphQL introspection
+    conforms: false
+    evidence: >-
+      reporting-api.triplelift.net requires X-API-Key before introspection (401);
+      federated-api.prod.triplelift.net returns INTROSPECTION_DISABLED (400). No
+      GraphQL schema is publicly discoverable.
+    method: probed
+  - id: oidc
+    name: OpenID Connect Discovery 1.0
+    conforms: true
+    evidence: >-
+      https://auth.triplelift.net/.well-known/openid-configuration returns a
+      complete OIDC discovery document (HTTP 200) with jwks_uri, userinfo,
+      registration and revocation endpoints.
+    method: probed
+    source: https://auth.triplelift.net/.well-known/openid-configuration
+  - id: oauth2-pkce
+    name: OAuth 2.0 PKCE (RFC 7636)
+    conforms: true
+    evidence: 'code_challenge_methods_supported includes S256 on both authorization servers; the app.triplelift.com login flow uses code_challenge_method=S256.'
+    method: probed
+  - id: rfc8414
+    name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+    conforms: true
+    evidence: 'Served at https://triplelift.com/.well-known/oauth-authorization-server and https://auth.triplelift.net/.well-known/oauth-authorization-server (both 200).'
+    method: probed
+  - id: rfc9728
+    name: OAuth 2.0 Protected Resource Metadata (RFC 9728)
+    conforms: partial
+    evidence: >-
+      Served on triplelift.com for the WordPress MCP server (200), but NOT on
+      docs.triplelift.com or supply-docs.triplelift.com, whose MCP endpoints return
+      401 with no WWW-Authenticate and no metadata document (404).
+    method: probed
+  - id: dpop
+    name: OAuth 2.0 DPoP (RFC 9449)
+    conforms: true
+    evidence: 'dpop_signing_alg_values_supported: ["ES256"] in the Auth0 discovery document.'
+    method: probed
+  - id: jwt
+    name: JSON Web Token (RFC 7519)
+    conforms: true
+    evidence: The Reporting API requires an Authorization Bearer JWT with a one-month lifetime; the platform issues RS256/PS256-signed tokens.
+    source: https://supply-docs.triplelift.com/reference/authorization
+  - id: mcp
+    name: Model Context Protocol
+    conforms: partial
+    evidence: >-
+      Three JSON-RPC 2.0 MCP endpoints respond on TripleLift hosts, but all three
+      reject an anonymous tools/list and only one publishes the discovery metadata
+      the specification expects.
+    method: probed
+  - id: a2a
+    name: A2A Agent Card
+    conforms: false
+    evidence: '/.well-known/agent-card.json and /.well-known/agent.json return 404 on every TripleLift host. The two 200s observed on console.triplelift.com are an SPA catch-all HTML shell, not an agent card.'
+    method: probed
+  - id: openapi
+    name: OpenAPI
+    conforms: false
+    evidence: >-
+      No OpenAPI or Swagger document is served on any TripleLift host. Probed
+      /openapi.json on docs.triplelift.com (404), supply-docs.triplelift.com (404),
+      tlx.3lift.com (404) and federated-api.prod.triplelift.net (404). The APIs are
+      GraphQL, so this is a design consequence rather than an omission — but the
+      GraphQL schema is not publicly retrievable either, so no machine-readable
+      contract exists for any TripleLift API.
+    method: probed
+  - id: asyncapi
+    name: AsyncAPI
+    conforms: false
+    evidence: >-
+      Not applicable. TripleLift publishes no webhook, event or streaming surface.
+      Asynchronous reporting is delivered by pre-signed S3 download or email, both
+      client-polled or push-to-inbox, neither an event contract.
+  - id: rfc9457
+    name: Problem Details for HTTP APIs (RFC 9457)
+    conforms: false
+    evidence: 'Errors use a Spring Boot default body ({path,status,error,message,timestamp}) served as application/json, not application/problem+json.'
+    method: probed
+  - id: rfc8594
+    name: 'Sunset HTTP Header (RFC 8594)'
+    conforms: false
+    evidence: No Sunset or Deprecation header support and no deprecation policy is published.
+  - id: rate-limit-headers
+    name: 'RateLimit header fields (draft-ietf-httpapi-ratelimit-headers)'
+    conforms: false
+    evidence: >-
+      TripleLift returns no X-RateLimit-* or RateLimit-* headers and does not use
+      the RFC 7231 Retry-After response header. The backoff value is published only
+      as a "retry-after" field inside the 429 JSON body.
+    source: https://supply-docs.triplelift.com/reference/rate-limiting
+  - id: iso-8601
+    name: ISO 8601 date and time
+    conforms: true
+    evidence: Report startDate/endDate are YYYY-MM-DD; error timestamps are ISO 8601 with milliseconds and offset; all data is UTC.
+  - id: iso-3166-2
+    name: 'ISO 3166-2 country subdivisions'
+    conforms: true
+    evidence: The REGION reporting dimension is explicitly defined as ISO 3166-2 subdivisions.
+    source: https://supply-docs.triplelift.com/reference/publishernetworkreport
+  - id: iab-ad-product-taxonomy
+    name: IAB Tech Lab Ad Product Taxonomy
+    conforms: true
+    evidence: The CREATIVE_CATEGORY reporting dimension is classified against IAB Tech Lab taxonomies.
+    source: https://supply-docs.triplelift.com/reference/publishernetworkreport
+compliance_programs:
+  published: false
+  note: >-
+    A Trust Center exists at https://trust.triplelift.com but renders only through
+    JavaScript and names no certification in its served HTML. No SOC 2, ISO 27001,
+    PCI or other certification is asserted on any machine-readable TripleLift
+    surface. See security/triplelift-trust-center.yml. Because no certification
+    could be read, no Compliance pointer is emitted.
+summary:
+  conforms_count: 20
+  partial_count: 2
+  not_conforms_count: 8

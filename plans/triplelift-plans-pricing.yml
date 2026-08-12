@@ -1,44 +1,69 @@
 name: TripleLift Plans and Pricing
-description: TripleLift does not publish self-serve pricing tiers publicly. Access
-  to the TripleLift Exchange (TLX) and Supply Publisher APIs is provisioned through
-  direct partnership agreements. Pricing is negotiated based on inventory volume,
-  campaign scale, and integration type. Demand partners (DSPs) and supply partners
-  (publishers/SSPs) must contact TripleLift to obtain credentials and onboard.
-plans:
+description: >-
+  TripleLift publishes no pricing page, no plan tiers, no rate card and no self-serve
+  signup. Every route to an API credential runs through a partnership agreement
+  negotiated with a TripleLift representative. The only "pricing" surface on
+  triplelift.com is a contact form. plan_count is 0 by design: the two entries below
+  describe published ACCESS PATHS, not purchasable plans.
+generated: '2026-08-12'
+method: searched
+source: https://triplelift.com/contact-us/
+pricing_page: none
+self_serve: false
+free_tier: false
+trial: false
+public_pricing: false
+plan_count: 0
+commercial_model:
+  demand_side: >-
+    CPM-based media spend transacted through the auction. No published platform fee,
+    no published API access fee.
+  supply_side: >-
+    Negotiated revenue share of cleared CPM on filled impressions. Terms set in the
+    publisher partnership agreement.
+  api_metering: >-
+    None. API access is not metered or billed separately; it is an entitlement of the
+    partnership. The Reporting API's 1,000-requests-per-day cap is a technical quota,
+    not a billing tier — there is no published way to buy more.
+access_paths:
   - name: Demand Partner Integration
-    description: Access for DSPs and buyers to participate in TripleLift's native,
-      banner, video, and CTV exchange via OpenRTB. Includes sandbox environment for
-      testing, DSP UI access for instance and profile configuration, creative approval,
-      and reporting dashboards.
+    audience: DSPs and buyers
     url: https://triplelift.com/contact-us/
-    pricing: Negotiated — contact TripleLift
-    features:
-      - Real-time bidding via OpenRTB 2.x
-      - Native Ads API (OpenRTB Native 1.2)
-      - Sandbox environment at sand-bidder.triplelift.net
-      - DSP UI for instance and bid filter management
-      - User sync endpoints
-      - Creative submission and validation
-      - Win notification support
-      - Privacy compliance (GDPR, CCPA, ePrivacy)
-      - SKAdNetwork support
+    price: negotiated
+    surfaces:
+      - TLX server-to-server OpenRTB endpoint (https://tlx.3lift.com/s2s/auction)
+      - User-sync endpoints on eb2.3lift.com
+      - TripleLift Platform (https://app.triplelift.com)
+    credential: supplier_id / member id issued at onboarding
+    documentation: https://docs.triplelift.com
+    documentation_public: true
   - name: Supply Partner / Publisher Integration
-    description: Access for publishers and supply partners to monetize inventory through
-      TripleLift's native SSP. Includes publisher network reporting API, CTV publisher
-      reporting, and Prebid integration support.
-    url: https://supply-docs.triplelift.com/reference/introduction
-    pricing: Negotiated — contact TripleLift
-    features:
-      - Publisher Network Report API
-      - CTV Publisher Network Report API
-      - Synchronous and asynchronous query support
+    audience: publishers and supply partners
+    url: https://triplelift.com/contact-us/
+    price: negotiated
+    surfaces:
+      - TripleLift Reporting API (https://reporting-api.triplelift.net/graphql)
+      - TripleLift Console (https://console.triplelift.com)
+      - TripleLift CTV Console (https://console.triplelift.tv)
       - Prebid.js and Prebid Server adapters
-      - iOS and Android SDK support
-      - Header bidding wrapper integration
-      - Deal ID targeting and activation
-      - First-party audience targeting
+    credential: X-API-Key plus JWT, self-issued from the Console once the account exists
+    documentation: https://supply-docs.triplelift.com/reference/introduction
+    documentation_public: true
 notes:
-  - Pricing is enterprise/negotiated with no public self-serve tiers
-  - Sandbox credentials provided by TripleLift representative
-  - Creative approval has no additional fee
-  - Implementation costs estimated at $2,000–$10,000 (third-party estimates; not officially published)
+  - >-
+    Documentation is genuinely open — both docs sites, both llms.txt files and the
+    full changelog are readable without a login. The wall is at credential issuance,
+    not at the docs.
+  - >-
+    A previous round of this artifact listed an implementation cost of $2,000–$10,000
+    sourced from third-party estimates, and a sandbox at sand-bidder.triplelift.net.
+    The cost figure is not published by TripleLift and has been removed; the sandbox
+    host no longer resolves (DNS failure, 2026-08-12) and no sandbox is described in
+    the current documentation, so that claim has been removed too.
+x-evidence:
+  - url: https://triplelift.com/contact-us/
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://triplelift.com/pricing/
+    http_status: 404
+    fetched: '2026-08-12'

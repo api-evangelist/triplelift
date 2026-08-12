@@ -1,0 +1,177 @@
+name: TripleLift Error Catalog
+description: >-
+  TripleLift publishes no error reference page. This catalog is assembled from the
+  one error example TripleLift does document (the 429 in the rate-limiting page)
+  plus error bodies observed live on unauthenticated probes of the Reporting API,
+  the federated GraphQL gateway, the WordPress MCP server and the ReadMe docs MCP
+  servers. It is therefore a floor, not a complete catalog.
+generated: '2026-08-12'
+method: probed
+source: https://supply-docs.triplelift.com/reference/rate-limiting plus live probes of TripleLift API hosts, 2026-08-12
+format: proprietary
+rfc9457: false
+media_type: application/json
+envelopes:
+  - id: spring-error
+    used_by: reporting-api.triplelift.net
+    description: Spring Boot default error body. Not RFC 9457 problem+json — no type, title, detail or instance member.
+    fields:
+      - name: path
+        type: string
+        description: Request path, e.g. /graphql
+      - name: status
+        type: integer
+        description: HTTP status, repeated inside the body
+      - name: error
+        type: string
+        description: HTTP reason phrase
+      - name: message
+        type: string
+        description: Human-readable detail
+      - name: timestamp
+        type: string
+        description: ISO 8601 with milliseconds and +0000 offset
+      - name: retry-after
+        type: integer
+        description: Seconds to wait. Present on 429 only. Note the hyphenated JSON key.
+  - id: graphql-errors
+    used_by: federated-api.prod.triplelift.net
+    description: Apollo GraphQL error array.
+    fields:
+      - name: errors[].message
+        type: string
+      - name: errors[].extensions.code
+        type: string
+      - name: errors[].extensions.details
+        type: string
+  - id: jsonrpc-error
+    used_by: docs.triplelift.com/mcp, supply-docs.triplelift.com/mcp
+    description: JSON-RPC 2.0 error object (MCP transport).
+    fields:
+      - name: error.code
+        type: integer
+      - name: error.message
+        type: string
+  - id: wp-rest-error
+    used_by: triplelift.com/wp-json/*
+    description: WordPress REST API error body.
+    fields:
+      - name: code
+        type: string
+      - name: message
+        type: string
+      - name: data.status
+        type: integer
+problems:
+  - status: 429
+    envelope: spring-error
+    error: Forbidden
+    message: Too many requests, please wait before trying again
+    title: Rate limit exceeded
+    remediation: >-
+      Read the retry-after value from the RESPONSE BODY (there is no Retry-After
+      HTTP header) and sleep that many seconds. Limits are 1 request per 5 seconds
+      and 1,000 requests per day per API key.
+    method: searched
+    source: https://supply-docs.triplelift.com/reference/rate-limiting
+    example: '{"path":"/graphql","retry-after":2,"error":"Forbidden","message":"Too many requests, please wait before trying again","timestamp":"2024-05-06T21:17:23.036+0000","status":429}'
+    note: >-
+      The body says "error":"Forbidden" and "status":429 at the same time. A client
+      keying off the body's error string rather than the HTTP status will
+      misclassify throttling as an authorization failure.
+  - status: 401
+    envelope: spring-error
+    error: Bad Request
+    message: X-API-Key header is required
+    title: Missing API key
+    remediation: Send both X-API-Key and Authorization Bearer headers on every request.
+    method: probed
+    source: 'POST https://reporting-api.triplelift.net/graphql (anonymous), 2026-08-12'
+    example: '{"timestamp":"2026-08-12T16:48:51.944+0000","status":400,"error":"Bad Request","message":"X-API-Key header is required","path":"/graphql"}'
+    note: >-
+      Observed status mismatch: the HTTP response line is 401 while the body says
+      "status":400. Client code that trusts the body status will branch wrongly.
+  - status: 400
+    envelope: graphql-errors
+    code: INTROSPECTION_DISABLED
+    message: introspection has been disabled
+    title: Introspection disabled
+    remediation: >-
+      No remediation available to a caller — introspection is switched off at the
+      federated gateway. The schema is not discoverable by any client.
+    method: probed
+    source: 'POST https://federated-api.prod.triplelift.net/ (anonymous), 2026-08-12'
+  - status: 400
+    envelope: graphql-errors
+    code: CSRF_ERROR
+    message: >-
+      This operation has been blocked as a potential Cross-Site Request Forgery
+      (CSRF).
+    title: Apollo CSRF prevention
+    remediation: >-
+      Send a Content-Type that is not application/x-www-form-urlencoded,
+      multipart/form-data or text/plain, or send an x-apollo-operation-name or
+      apollo-require-preflight header.
+    method: probed
+    source: 'GET https://federated-api.prod.triplelift.net/?query=... , 2026-08-12'
+  - status: 400
+    envelope: graphql-errors
+    code: null
+    message: Invalid GraphQL request
+    detail: >-
+      There was no GraphQL operation to execute. Use the `query` parameter to send
+      an operation, using either GET or POST.
+    title: No operation supplied
+    method: probed
+    source: 'GET https://federated-api.prod.triplelift.net/ , 2026-08-12'
+  - status: 401
+    envelope: jsonrpc-error
+    code: -32001
+    message: Authorization required
+    title: MCP authorization required
+    remediation: >-
+      None discoverable. The 401 carries no WWW-Authenticate header and the host
+      publishes no /.well-known/oauth-protected-resource, so an MCP client cannot
+      learn where to authenticate.
+    method: probed
+    source: 'POST https://docs.triplelift.com/mcp , 2026-08-12'
+  - status: 401
+    envelope: wp-rest-error
+    code: mcp_unauthorized
+    message: MCP authentication required.
+    title: WordPress MCP unauthorized
+    remediation: >-
+      Follow the OAuth chain published at
+      https://triplelift.com/.well-known/oauth-protected-resource.
+    method: probed
+    source: 'POST https://triplelift.com/wp-json/mcp/mcp-oauth-server , 2026-08-12'
+  - status: 404
+    envelope: wp-rest-error
+    code: rest_no_route
+    message: No route was found matching the URL and request method.
+    title: Unknown WordPress REST route
+    method: probed
+    source: 'POST https://triplelift.com/wp-json/mcp , 2026-08-12'
+silent_failures:
+  - name: row-limit truncation
+    description: >-
+      A synchronous report query exceeding the 5,000-row limit returns data only up
+      to the limit. No error, no warning field, no truncation flag.
+    detection: compare totalRows against the number of rows returned
+    source: https://supply-docs.triplelift.com/reference/synchronous
+  - name: domain threshold rollup
+    description: >-
+      Any query including the DOMAIN dimension silently collapses rows contributing
+      under 0.1% of total renders into a single row named "Other".
+    detection: look for a row whose domain value is literally "Other"
+    opt_out: useThreshold
+    source: https://supply-docs.triplelift.com/reference/faq
+notes:
+  - >-
+    Two of the three error bodies observed carry an HTTP status in the payload that
+    disagrees with the actual HTTP status line. Any client should treat the HTTP
+    status line as authoritative.
+  - >-
+    TripleLift documents exactly one error condition (429) across its entire public
+    developer surface. There is no error code reference, no exhaustive status list,
+    and no problem-type registry.

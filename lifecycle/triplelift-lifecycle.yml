@@ -1,0 +1,142 @@
+name: TripleLift API Lifecycle
+description: >-
+  Versioning, change communication, deprecation posture and operational status for
+  the TripleLift API surface. TripleLift runs a real, public, component-level status
+  page with a machine-readable summary endpoint and maintains a dated changelog for
+  the Reporting API. It publishes no versioning policy, no deprecation policy, no
+  Sunset/Deprecation header support and no SLA.
+generated: '2026-08-12'
+method: searched
+source: https://status.triplelift.com/ and https://supply-docs.triplelift.com/llms.txt
+versioning:
+  scheme: none
+  detail: >-
+    The Reporting API is a single unversioned GraphQL endpoint
+    (https://reporting-api.triplelift.net/graphql). No version path segment, no
+    version header, no media-type versioning, no version negotiation. The TLX
+    exchange endpoint is versioned only by the IAB specification it implements
+    (OpenRTB 2.x, Native Ads 1.2), not by TripleLift.
+  policy_published: false
+  correction: >-
+    apis.yml previously claimed "versioned endpoints (v1.0 through v1.3)" for the
+    Supply Publisher API. No such versioning exists on the published surface;
+    corrected 2026-08-12.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  notice_period: not published
+  detail: >-
+    No deprecation policy, no advance-notice commitment, and no RFC 8594
+    Sunset/Deprecation header support is published anywhere on the TripleLift
+    developer surface. Nine of the ten dated changelog entries are purely additive.
+    The one exception is instructive: the 2025-11-13 "release candidate" entry
+    renamed the dimension dsp_seat_id to dsp_seat and changed its data type from
+    integer to string, in both publisherNetworkReport and ctvPublisherNetworkReport
+    — a breaking change to a field added only five months earlier, shipped as a
+    changelog line with no deprecation window, no alias period and no sunset date.
+    That is the observed precedent for how TripleLift communicates a breaking
+    change.
+  observed_breaking_changes:
+    - date: '2025-11-13'
+      change: dimension dsp_seat_id renamed to dsp_seat; data type corrected from integer to string
+      surfaces: [publisherNetworkReport, ctvPublisherNetworkReport]
+      notice: none — announced in the changelog at the time of the change
+      source: https://supply-docs.triplelift.com/changelog/release-candidate
+  deprecated_operations: []
+sla:
+  published: false
+  detail: >-
+    No public uptime or latency SLA. Two operational commitments appear in the
+    docs and function as de facto SLOs for integrators. Neither is contractual.
+  documented_targets:
+    - surface: TLX exchange
+      target: demand partners must return a bid response within a strict timeout window enforced by the exchange
+      source: partner integration terms
+    - surface: Reporting API asynchronous endpoints
+      target: results returned within 5 minutes
+      source: https://supply-docs.triplelift.com/reference/asynchronous
+    - surface: Reporting data freshness
+      target: the first hour of a day is generally available by 10:00 UTC; current-day data is not real time
+      source: https://supply-docs.triplelift.com/reference/faq
+status_page:
+  url: https://status.triplelift.com/
+  platform: Atlassian Statuspage
+  http_status: 200
+  machine_readable: https://status.triplelift.com/api/v2/summary.json
+  feeds:
+    - https://status.triplelift.com/history.atom
+    - https://status.triplelift.com/history.rss
+  subscribe:
+    - email
+    - slack
+    - atom
+    - rss
+  components:
+    - name: Data Pipeline
+      description: Systems Powering Triplelift Data Processing Pipelines
+    - name: Partner Integrations
+      description: Systems Powering Triplelift Partner Integrations
+    - name: Real Time Bidding
+      description: Systems Powering Real Time Bidding on the Triplelift Exchange
+    - name: Rendering
+      description: Systems Powering Client-Side Rendering of Triplelift Ads
+    - name: Reporting
+      description: Systems Powering Metric Generation and Extraction on the Triplelift Exchange
+  observed:
+    fetched: '2026-08-12'
+    indicator: none
+    description: All Systems Operational
+    incidents_last_15_days: 0
+  note: >-
+    Component granularity is genuinely useful — Real Time Bidding, Reporting and
+    Rendering are separated, which is exactly the split a partner needs to triage
+    against. The summary.json endpoint makes it agent-consumable without scraping.
+changelog:
+  published: true
+  url: https://supply-docs.triplelift.com/changelog
+  scope: Reporting API only — there is no changelog for the TLX exchange or the platform API
+  detail: changelog/triplelift-changelog.yml
+support:
+  contact: https://triplelift.com/contact-us/
+  model: named client-services contact assigned at onboarding (Publisher Client Services Team for supply partners)
+  self_serve: false
+  detail: >-
+    There is no public support portal, ticketing system or developer forum. Every
+    documented support path routes through an assigned TripleLift contact.
+console_surfaces:
+  - name: TripleLift Console
+    url: https://console.triplelift.com
+    purpose: self-serve portal; source of the Reporting API key and JWT
+  - name: TripleLift Platform
+    url: https://app.triplelift.com
+    purpose: main platform UI; authenticates against the Auth0 tenant and the federated GraphQL gateway
+  - name: TripleLift CTV Console
+    url: https://console.triplelift.tv
+    purpose: CTV reporting
+  - name: Altair GraphQL explorer
+    url: https://reporting-api.triplelift.net/altair
+    purpose: hosted schema browser for the Reporting API; requires auth headers
+sandbox:
+  published: false
+  detail: >-
+    Earlier catalog material referenced a demand-side sandbox at
+    sand-bidder.triplelift.net. That host does not resolve as of 2026-08-12 (DNS
+    failure, curl exit before any HTTP status), and no sandbox, test-mode key
+    prefix, or test fixture is documented anywhere in the current TLX or supplier
+    documentation. Recorded as absent rather than carried forward.
+  probe:
+    url: https://sand-bidder.triplelift.net/
+    result: DNS resolution failed (no HTTP status)
+    fetched: '2026-08-12'
+x-evidence:
+  - url: https://status.triplelift.com/api/v2/summary.json
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://supply-docs.triplelift.com/llms.txt
+    http_status: 200
+    fetched: '2026-08-12'
+  - url: https://reporting-api.triplelift.net/altair
+    http_status: 401
+    fetched: '2026-08-12'

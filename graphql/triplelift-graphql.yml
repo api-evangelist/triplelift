@@ -1,0 +1,156 @@
+name: TripleLift GraphQL Surfaces
+description: >-
+  TripleLift's two REST-shaped product APIs are, in fact, GraphQL. The Reporting
+  API for publishers and supply partners is a single GraphQL endpoint at
+  https://reporting-api.triplelift.net/graphql, and the TripleLift platform
+  (app.triplelift.com) is served by an Apollo Federation gateway at
+  https://federated-api.prod.triplelift.net/. Neither will answer an anonymous
+  introspection query, so the SDL below is NOT captured: the Reporting endpoint
+  rejects unauthenticated requests and the federation gateway has introspection
+  explicitly disabled. Every operation named here is read from TripleLift's own
+  published documentation, not from a schema dump.
+generated: '2026-08-12'
+method: searched
+source: https://supply-docs.triplelift.com/reference/introduction
+endpoints:
+  - name: TripleLift Reporting API
+    url: https://reporting-api.triplelift.net/graphql
+    transport: HTTP POST, application/json
+    introspection:
+      attempted: true
+      status: 401
+      result: gated
+      response: '{"status":400,"error":"Bad Request","message":"X-API-Key header is required","path":"/graphql"}'
+      note: >-
+        Introspection requires the same X-API-Key + Bearer JWT pair as any other
+        query. SDL not captured — an authenticated introspection pass would be
+        required and we do not hold credentials.
+    explorer:
+      name: Altair GraphQL Client
+      url: https://reporting-api.triplelift.net/altair
+      status: 401
+      note: >-
+        TripleLift hosts Altair at /altair as the schema browser. It is behind the
+        same auth headers, so the schema documentation it renders is only visible
+        to credentialed partners. This is the only published route to the schema.
+    documented_operations:
+      - name: publisherNetworkReport
+        type: query
+        category: reporting
+        description: >-
+          Standard publisher performance reporting. Accepts sellerMemberId,
+          startDate, endDate, dimensions[], metrics[], filters[], plus cursor and
+          size for pagination. Returns rows{dimensions{name,value},
+          metrics{...on MetricLong{name,value} ...on MetricDecimal{name,value}}},
+          nextCursor and totalRows.
+        limits: 5,000 row hard limit; default page size 50
+        docs: https://supply-docs.triplelift.com/reference/publishernetworkreport
+      - name: publisherNetworkFilterOptions
+        type: query
+        category: reporting
+        description: Returns all possible filter values of a dimension in a given time period; the returned filter IDs are the values used in publisherNetworkReport filters.
+        docs: https://supply-docs.triplelift.com/reference/synchronous
+      - name: ctvPublisherNetworkReport
+        type: query
+        category: reporting-ctv
+        description: >-
+          CTV publisher reporting. Same shape as publisherNetworkReport plus the
+          IAB OpenRTB 2.6 content object dimensions and TripleLift video content
+          metadata (SSAI_VENDOR, TL_WINS, APP_DEVELOPER_DOMAIN and similar).
+        limits: 5,000 row hard limit
+        docs: https://supply-docs.triplelift.com/reference/ctvpublishernetworkreport
+      - name: ctvPublisherFilterOptions
+        type: query
+        category: reporting-ctv
+        description: Returns all possible filter values of a CTV dimension in a given time period.
+        docs: https://supply-docs.triplelift.com/reference/synchronous
+      - name: asyncDownloadPublisherNetworkReport
+        type: query
+        category: reporting-async
+        description: >-
+          Submits a large report asynchronously and returns a pre-signed S3
+          download URL. Same parameters as publisherNetworkReport without cursor
+          and size. The pre-signed URL expires 30 minutes after it is returned.
+        docs: https://supply-docs.triplelift.com/reference/asynchronous
+      - name: asyncDownloadCTVPublisherNetworkReport
+        type: query
+        category: reporting-async
+        description: CTV equivalent of asyncDownloadPublisherNetworkReport.
+        docs: https://supply-docs.triplelift.com/reference/asynchronous
+      - name: asyncDownloadReportStatus
+        type: query
+        category: reporting-async
+        description: >-
+          Polling endpoint. Accepts the pre-signed S3 link returned by an
+          asyncDownload* query and returns READY, WAITING or ERROR.
+        docs: https://supply-docs.triplelift.com/reference/asynchronous
+      - name: asyncEmailPublisherNetworkReport
+        type: query
+        category: reporting-async
+        description: >-
+          Submits a large report asynchronously and emails the CSV to a supplied
+          list of recipients. Returns true if the request was accepted. Emails
+          larger than 10MB fail to send.
+        docs: https://supply-docs.triplelift.com/reference/asynchronous
+      - name: asyncEmailCTVPublisherNetworkReport
+        type: query
+        category: reporting-async
+        description: CTV equivalent of asyncEmailPublisherNetworkReport.
+        docs: https://supply-docs.triplelift.com/reference/asynchronous
+    operation_count_documented: 9
+    note: >-
+      TripleLift's own docs repeatedly say "refer to the GraphQL schema for the
+      latest information on available endpoints, dimensions, and metrics." The
+      documented operation list above is therefore a floor, not a ceiling — the
+      authoritative surface is the gated schema.
+  - name: TripleLift Platform Federated API
+    url: https://federated-api.prod.triplelift.net/
+    transport: HTTP POST, application/json (Apollo Federation gateway; schema served at the host root, not /graphql)
+    discovered_via: >-
+      https://app.triplelift.com/ 302-redirects to the Auth0 authorize endpoint
+      with audience=https://federated-api.prod.triplelift.net, naming the gateway
+      and its full scope catalog in the query string.
+    introspection:
+      attempted: true
+      status: 400
+      result: disabled
+      response: '{"errors":[{"message":"introspection has been disabled","extensions":{"code":"INTROSPECTION_DISABLED"}}]}'
+      note: >-
+        This is a stronger negative than a 401. The gateway answers anonymously
+        and identifies itself as Apollo, but introspection is turned off at the
+        server, so no credential would reveal the SDL through this route either.
+        It also enforces Apollo CSRF prevention (a GET with a plain content type
+        is rejected with CSRF_ERROR).
+    subgraphs_inferred_from_oauth_scopes:
+      - deals-api
+      - buyer-api
+      - creative-service-api
+      - user-mgmt-api
+      - reporting-api
+      - margin-management-api
+      - advertiser-connect
+      - tlsuite
+    subgraph_note: >-
+      DERIVED, not documented — these service names are read off the OAuth scope
+      strings published in the app.triplelift.com authorize redirect (for example
+      deals-api:graphql.read and creative-service-api:graphql.read, both of which
+      name graphql explicitly). TripleLift publishes no public documentation for
+      any of them; they are named here as evidence of the platform's shape, not
+      as a callable contract.
+    documented_operations: []
+    public_documentation: none
+x-evidence:
+  - url: https://reporting-api.triplelift.net/graphql
+    method: POST
+    body: '{"query":"{__schema{queryType{name}}}"}'
+    http_status: 401
+    fetched: '2026-08-12'
+  - url: https://federated-api.prod.triplelift.net/
+    method: POST
+    body: '{"query":"{__schema{queryType{name}}}"}'
+    http_status: 400
+    fetched: '2026-08-12'
+  - url: https://reporting-api.triplelift.net/altair
+    method: GET
+    http_status: 401
+    fetched: '2026-08-12'

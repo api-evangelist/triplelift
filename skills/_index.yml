@@ -1,0 +1,68 @@
+name: TripleLift Agent Skills
+description: >-
+  Packaged agent skills for the TripleLift API surface. TripleLift publishes no
+  OpenAPI and no retrievable GraphQL schema, so these skills are grounded in the
+  operation names, argument names, response fields and numeric limits that appear
+  verbatim in TripleLift's own published documentation. Where the documentation
+  defers to the gated schema, the skills say so rather than guessing.
+generated: '2026-08-12'
+method: generated
+source: https://supply-docs.triplelift.com/llms.txt, https://docs.triplelift.com/llms.txt
+grounding_note: >-
+  No provider-published skills or AGENTS.md were found on any TripleLift host.
+  Introspection is gated on reporting-api.triplelift.net (401) and disabled on
+  federated-api.prod.triplelift.net (INTROSPECTION_DISABLED), so argument sets here
+  are the documented ones, not necessarily the complete ones.
+skills:
+  - name: triplelift-publisher-reporting
+    file: skills/triplelift-publisher-reporting.md
+    api: TripleLift Reporting API
+    protocol: graphql
+    operations:
+      - publisherNetworkReport
+      - publisherNetworkFilterOptions
+    covers:
+      - dual-header authentication (X-API-Key + Bearer JWT)
+      - cursor pagination with order-significant argument resubmission
+      - 1 req / 5 s and 1,000 req / day throttling with body-only retry-after
+      - 5,000-row silent truncation
+      - DOMAIN threshold rollup into an "Other" row
+      - Console-label vs API-field-name divergence
+  - name: triplelift-async-report-export
+    file: skills/triplelift-async-report-export.md
+    api: TripleLift Reporting API
+    protocol: graphql
+    operations:
+      - asyncDownloadPublisherNetworkReport
+      - asyncDownloadCTVPublisherNetworkReport
+      - asyncDownloadReportStatus
+      - asyncEmailPublisherNetworkReport
+      - asyncEmailCTVPublisherNetworkReport
+    covers:
+      - poll-a-presigned-URL and email delivery modes
+      - 30-minute pre-signed URL expiry
+      - 400 MB CSV and 10 MB email ceilings
+      - TripleLift's non-RFC-4180 CSV quoting rules
+      - poll-interval budgeting against the daily request cap
+  - name: triplelift-tlx-supply-integration
+    file: skills/triplelift-tlx-supply-integration.md
+    api: TripleLift Exchange (TLX) API
+    protocol: openrtb
+    operations:
+      - POST /s2s/auction
+      - GET /xuid
+      - GET /getuid
+      - GET /sync
+    covers:
+      - supplier_id identification and the single geo-balanced endpoint
+      - the four-datacenter routing and why not to pin a region
+      - the three-endpoint user-sync handshake and user.buyeruid
+      - GDPR TCF / us_privacy / GPP signalling
+      - environment-specific impression counting (1px-in-view in-app)
+      - sellers.json identity alignment with reporting PUBLISHER_ID
+not_covered:
+  - >-
+    The TripleLift Platform federated GraphQL API
+    (federated-api.prod.triplelift.net) — real, live, and reachable, but it has no
+    public documentation and introspection is disabled, so no skill can be grounded
+    in it without fabrication.

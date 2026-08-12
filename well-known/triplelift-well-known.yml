@@ -1,0 +1,217 @@
+name: TripleLift Well-Known Discovery Probe
+description: >-
+  Probe of RFC 8615 /.well-known/ paths across every TripleLift host named in
+  apis.yml plus the identity, console and API hosts discovered during contract
+  discovery. Three real documents were served: an OAuth 2.0 Authorization Server
+  Metadata document and an OAuth 2.0 Protected Resource Metadata document on the
+  marketing host triplelift.com (a WordPress site exposing an MCP server), and a
+  full OpenID Connect discovery document on the Auth0 tenant auth.triplelift.net
+  that fronts the TripleLift platform (app.triplelift.com / federated-api).
+  No security.txt, api-catalog, ai-plugin.json or A2A agent card is served on any
+  host.
+generated: '2026-08-12'
+method: probed
+source: live HTTPS probes of /.well-known/* on every TripleLift host, 2026-08-12
+hosts_probed:
+  - triplelift.com
+  - docs.triplelift.com
+  - supply-docs.triplelift.com
+  - reporting-api.triplelift.net
+  - api.triplelift.com
+  - tlx.3lift.com
+  - console.triplelift.com
+  - console.triplelift.tv
+  - auth.triplelift.net
+probes:
+  - host: triplelift.com
+    path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    file: well-known/triplelift-oauth-authorization-server.json
+    document: true
+    note: >-
+      Real OAuth 2.0 Authorization Server Metadata (RFC 8414). issuer
+      https://triplelift.com, scopes_supported ["mcp"], PKCE S256, dynamic client
+      registration via client_id_metadata_document. Served by the WordPress
+      marketing site (x-redirect-by: WordPress) that exposes an MCP server.
+  - host: triplelift.com
+    path: /.well-known/oauth-protected-resource
+    status: 200
+    content_type: application/json
+    file: well-known/triplelift-oauth-protected-resource.json
+    document: true
+    note: >-
+      Real OAuth 2.0 Protected Resource Metadata (RFC 9728). Names the protected
+      resource https://triplelift.com/wp-json/mcp/mcp-oauth-server and points at
+      https://triplelift.com as its authorization server.
+  - host: auth.triplelift.net
+    path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    file: well-known/triplelift-auth-openid-configuration.json
+    document: true
+    note: >-
+      Full OpenID Connect Discovery 1.0 document for the Auth0 tenant that
+      authenticates app.triplelift.com and issues tokens for the
+      federated-api.prod.triplelift.net GraphQL gateway.
+  - host: auth.triplelift.net
+    path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    document: true
+    note: Same metadata as the OIDC discovery document (Auth0 serves both paths).
+  - host: auth.triplelift.net
+    path: /.well-known/jwks.json
+    status: 200
+    document: true
+    note: JSON Web Key Set for verifying platform access tokens.
+  - host: triplelift.com
+    path: /.well-known/security.txt
+    status: 404
+    document: false
+  - host: triplelift.com
+    path: /.well-known/openid-configuration
+    status: 404
+    document: false
+  - host: triplelift.com
+    path: /.well-known/api-catalog
+    status: 404
+    document: false
+  - host: triplelift.com
+    path: /.well-known/ai-plugin.json
+    status: 404
+    document: false
+  - host: triplelift.com
+    path: /.well-known/agent-card.json
+    status: 404
+    document: false
+  - host: triplelift.com
+    path: /.well-known/agent.json
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/security.txt
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/openid-configuration
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/oauth-authorization-server
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/oauth-protected-resource
+    status: 404
+    document: false
+    note: >-
+      Notable absence: docs.triplelift.com/mcp answers JSON-RPC with 401
+      "Authorization required" but publishes no RFC 9728 protected-resource
+      metadata, so an MCP client cannot discover how to authenticate.
+  - host: docs.triplelift.com
+    path: /.well-known/api-catalog
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/ai-plugin.json
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/agent-card.json
+    status: 404
+    document: false
+  - host: docs.triplelift.com
+    path: /.well-known/agent.json
+    status: 404
+    document: false
+  - host: supply-docs.triplelift.com
+    path: /.well-known/security.txt
+    status: 404
+    document: false
+  - host: supply-docs.triplelift.com
+    path: /.well-known/oauth-protected-resource
+    status: 404
+    document: false
+  - host: supply-docs.triplelift.com
+    path: /.well-known/agent-card.json
+    status: 404
+    document: false
+  - host: supply-docs.triplelift.com
+    path: /.well-known/agent.json
+    status: 404
+    document: false
+  - host: reporting-api.triplelift.net
+    path: /.well-known/security.txt
+    status: 401
+    document: false
+    note: The Reporting API host requires an X-API-Key header on every path, including /.well-known/.
+  - host: reporting-api.triplelift.net
+    path: /.well-known/oauth-authorization-server
+    status: 401
+    document: false
+  - host: reporting-api.triplelift.net
+    path: /.well-known/agent-card.json
+    status: 401
+    document: false
+  - host: api.triplelift.com
+    path: /.well-known/security.txt
+    status: 400
+    document: false
+    note: Returns a JSON routing error for every /.well-known/ path.
+  - host: api.triplelift.com
+    path: /.well-known/agent-card.json
+    status: 400
+    document: false
+  - host: tlx.3lift.com
+    path: /.well-known/security.txt
+    status: 404
+    document: false
+  - host: tlx.3lift.com
+    path: /.well-known/agent-card.json
+    status: 404
+    document: false
+  - host: tlx.3lift.com
+    path: /.well-known/agent.json
+    status: 404
+    document: false
+  - host: console.triplelift.com
+    path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    document: false
+    note: >-
+      FALSE POSITIVE — the console is a single-page app whose catch-all route
+      returns the same 150KB HTML shell with HTTP 200 for EVERY /.well-known/
+      path, including agent-card.json. Not a document. Recorded as a miss.
+  - host: console.triplelift.com
+    path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    document: false
+    note: SPA catch-all HTML shell, not an AgentCard. Recorded as a miss.
+  - host: console.triplelift.tv
+    path: /.well-known/agent-card.json
+    status: 404
+    document: false
+other_machine_readable:
+  - path: /sellers.json
+    url: https://triplelift.com/sellers.json
+    status: 200
+    content_type: application/json
+    bytes: 1254586
+    note: >-
+      IAB Tech Lab sellers.json (OpenRTB supply-chain transparency). Also served
+      identically at https://3lift.com/sellers.json. Not a /.well-known/ path but
+      a real, large, machine-readable first-party document.
+  - path: /api/v2/summary.json
+    url: https://status.triplelift.com/api/v2/summary.json
+    status: 200
+    content_type: application/json
+    note: Atlassian Statuspage machine-readable status summary.
+  - path: /ads.txt
+    url: https://triplelift.com/ads.txt
+    status: 404
+  - path: /app-ads.txt
+    url: https://triplelift.com/app-ads.txt
+    status: 404

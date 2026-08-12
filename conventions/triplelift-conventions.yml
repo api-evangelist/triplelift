@@ -1,0 +1,163 @@
+name: TripleLift API Conventions
+description: >-
+  Cross-cutting runtime semantics for the TripleLift Reporting API (GraphQL) and
+  the TLX exchange endpoint (OpenRTB). Everything here is read from TripleLift's
+  published documentation or observed on a live unauthenticated response.
+generated: '2026-08-12'
+method: searched
+source: https://supply-docs.triplelift.com/reference/introduction
+authentication:
+  style: dual-header
+  headers:
+    - 'X-API-Key: <member API key>'
+    - 'Authorization: Bearer <JWT>'
+  both_required: true
+  detail: authentication/triplelift-authentication.yml
+idempotency:
+  supported: false
+  header: none
+  note: >-
+    No idempotency key is published for any TripleLift API. It is a low-risk gap
+    for the Reporting API, which is read-only (every documented operation is a
+    GraphQL query, including the async ones), but the platform federated API
+    exposes mutating scopes (deals-api:deal.*, creative-service-api:campaign.manage,
+    margin-management-api:fee.create) with no published idempotency semantics.
+pagination:
+  style: opaque-cursor
+  applies_to: synchronous reporting queries
+  request_fields:
+    - name: size
+      description: Page size. Defaults to 50 rows. Cannot exceed the endpoint row limit.
+    - name: cursor
+      description: Value of nextCursor from the previous response.
+  response_fields:
+    - name: nextCursor
+      description: Present only when more rows remain.
+    - name: totalRows
+      description: Total row count for the query.
+  constraint: >-
+    When supplying a cursor for the next page, the caller MUST resubmit every other
+    query parameter, in the same order as originally passed. This is unusual and
+    brittle — argument order is not normally significant in GraphQL, and an agent
+    that reconstructs a query from a parsed AST will break pagination.
+  row_limits:
+    publisherNetworkReport: 5000
+    ctvPublisherNetworkReport: 5000
+    note: A query exceeding the row limit silently returns data only up to the limit rather than erroring. Use the asynchronous endpoints beyond that.
+  docs: https://supply-docs.triplelift.com/reference/synchronous
+async_jobs:
+  supported: true
+  patterns:
+    - name: poll-a-presigned-url
+      submit: asyncDownloadPublisherNetworkReport / asyncDownloadCTVPublisherNetworkReport
+      returns: pre-signed S3 URL
+      poll: asyncDownloadReportStatus (accepts the pre-signed link)
+      statuses: [READY, WAITING, ERROR]
+      url_ttl: 30 minutes
+      poll_interval: 'not published in the docs — the docs defer to the GraphQL schema for the status refresh rate'
+    - name: email-delivery
+      submit: asyncEmailPublisherNetworkReport / asyncEmailCTVPublisherNetworkReport
+      returns: boolean
+      limit: emails over 10MB fail to send
+  sla: results within 5 minutes
+  payload_limit: CSV reports larger than 400MB fail
+  docs: https://supply-docs.triplelift.com/reference/asynchronous
+response_format:
+  synchronous: application/json (GraphQL envelope — data / errors)
+  asynchronous: CSV
+  csv_parsing:
+    null_values: fields may be null
+    quoting: fields are unquoted unless a string contains a quote or a delimiter; embedded quotes are doubled
+    example: 'example".com  =>  "example"".com"'
+    docs: https://supply-docs.triplelift.com/reference/csv-response-parsing
+rate_limiting:
+  signalled_by: HTTP 429 with a retry-after field in the JSON body
+  header: none — retry-after is a BODY field, not the RFC 7231 Retry-After response header
+  detail: rate-limits/triplelift-rate-limits.yml
+  note: >-
+    This is the single most important convention for an automated client to get
+    right. TripleLift returns no X-RateLimit-* or RateLimit-* headers and does not
+    use the standard Retry-After header; the backoff value is only inside the JSON
+    payload, so a generic HTTP client's retry middleware will not see it.
+error_envelope:
+  transport_errors:
+    shape:
+      path: string — the request path, e.g. /graphql
+      status: integer — the HTTP status, repeated in the body
+      error: string — the HTTP reason phrase, e.g. Forbidden, Bad Request
+      message: string — human-readable detail
+      timestamp: string — ISO 8601 with milliseconds and offset
+      retry-after: integer — seconds, present on 429 only
+    example: '{"path":"/graphql","retry-after":2,"error":"Forbidden","message":"Too many requests, please wait before trying again","timestamp":"2024-05-06T21:17:23.036+0000","status":429}'
+    note: Spring Boot default error shape. Not RFC 9457 problem+json.
+  graphql_errors:
+    shape: standard GraphQL errors[] with message and extensions
+    example: '{"errors":[{"message":"introspection has been disabled","extensions":{"code":"INTROSPECTION_DISABLED"}}]}'
+    note: Observed on the federated gateway. Apollo-style extensions.code.
+  detail: errors/triplelift-problem-types.yml
+versioning:
+  scheme: none
+  detail: >-
+    The Reporting API is a single unversioned GraphQL endpoint at /graphql. There
+    is no version path segment, no version header, and no published version
+    negotiation. Change is communicated through a dated changelog only.
+  changelog: changelog/triplelift-changelog.yml
+  note: >-
+    apis.yml previously described this API as having "versioned endpoints (v1.0
+    through v1.3)". That is not what TripleLift publishes; corrected 2026-08-12.
+data_semantics:
+  timezone: UTC — all data
+  currency: USD — all monetary fields
+  freshness: >-
+    Current-day data is not real time. The first hour of a day can generally be
+    expected by 10:00 UTC.
+  retention:
+    daily: 15 months (YMD dimension)
+    hourly: from 00:00 UTC yesterday
+  field_naming: >-
+    Reporting API field names differ from the TripleLift Console labels. Notably
+    Console "Ad Requests" is Reporting API IMPRESSIONS, and Console "Filled
+    Impressions" is RENDERED — the same word means different things in the two
+    surfaces, which is a live footgun for anyone reconciling numbers.
+  docs: https://supply-docs.triplelift.com/reference/faq
+implicit_result_mutation:
+  name: domain threshold rollup
+  trigger: any query that includes the DOMAIN dimension
+  behaviour: >-
+    Rows contributing less than 0.1% of total renders are silently collapsed into a
+    single row with the domain name "Other". This happens by default and changes
+    the result set without an error or a warning field.
+  opt_out: 'useThreshold query parameter'
+  docs: https://supply-docs.triplelift.com/reference/faq
+exchange_conventions:
+  endpoint: 'https://tlx.3lift.com/s2s/auction?supplier_id=<id>'
+  protocol: IAB OpenRTB 2.x, IAB Native Ads 1.2
+  identification: supplier_id query parameter issued at onboarding
+  geo_routing: >-
+    The single endpoint is geo-load balanced across us-east-1, us-west-1,
+    eu-central-1 and ap-southeast-1. TripleLift explicitly advises against calling
+    region-specific endpoints — the balanced endpoint provides regional failover.
+  user_sync:
+    host: https://eb2.3lift.com
+    endpoints:
+      - path: /xuid
+        purpose: store the partner's user ID in TripleLift's match table
+        params: [mid, xuid, dongle, gdpr, gdpr_consent, us_privacy, gpp]
+      - path: /getuid
+        purpose: return the TripleLift user ID (tluid) via browser redirect
+        params: [redir, gdpr, gdpr_consent, us_privacy, gpp]
+      - path: /sync
+        purpose: return the tluid and fan out syncs to TripleLift partners; must be called in an iframe
+    id_field: 'the tluid returned during sync must be set in user.buyeruid on the bid request'
+  impression_counting:
+    in_app: 1px-in-view
+    web_display: on render
+    video: on video start
+  docs: https://docs.triplelift.com/docs/supply-partners
+cross_references:
+  authentication: authentication/triplelift-authentication.yml
+  scopes: scopes/triplelift-scopes.yml
+  errors: errors/triplelift-problem-types.yml
+  rate_limits: rate-limits/triplelift-rate-limits.yml
+  lifecycle: lifecycle/triplelift-lifecycle.yml
+  graphql: graphql/triplelift-graphql.yml

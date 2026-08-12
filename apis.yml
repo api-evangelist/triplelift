@@ -1,10 +1,15 @@
 aid: triplelift
 name: TripleLift
-description: TripleLift is a programmatic advertising company specializing in native
-  inventory with APIs for managing native ad units, deals, targeting, viewability
-  measurement, and creative quality. The platform provides OpenRTB-compliant exchange
-  APIs for demand and supply partners, publisher network reporting, connected TV (CTV)
-  advertising, and mobile SDKs for iOS and Android.
+description: TripleLift is a programmatic advertising exchange and supply-side platform
+  built around native inventory, with a public developer surface in two parts. The
+  TripleLift Exchange (TLX) is an IAB OpenRTB 2.x server-to-server auction endpoint for
+  native, banner, video and connected TV, geo-load balanced across four AWS regions, with
+  user-sync endpoints carrying GDPR TCF, us_privacy and GPP consent signals and
+  SKAdNetwork support for iOS attribution. The TripleLift Reporting API is a GraphQL API
+  for publishers and supply partners covering standard and CTV network reporting, with
+  synchronous cursor-paginated queries and asynchronous CSV export by pre-signed download
+  or email. TripleLift also publishes sellers.json, a component-level status page, a
+  dated Reporting API changelog, and Prebid.js and Prebid Server bid adapters.
 type: Index
 accessModel:
   pricing: unknown
@@ -21,7 +26,7 @@ accessModel:
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/triplelift.png
 url: https://raw.githubusercontent.com/api-evangelist/triplelift/refs/heads/main/apis.yml
 created: '2026-06-13'
-modified: '2026-06-13'
+modified: '2026-08-12'
 specificationVersion: '0.19'
 tags:
   - Programmatic Advertising
@@ -32,6 +37,10 @@ tags:
   - Connected TV
   - Supply Side Platform
   - Demand Side Platform
+  - GraphQL
+  - Ad Tech
+  - Publisher Reporting
+  - Real-Time Bidding
 apis:
   - name: TripleLift Exchange (TLX) API
     description: Real-time bidding API implementing OpenRTB 2.x and Native Ads 1.2
@@ -51,26 +60,48 @@ apis:
     properties:
       - type: Documentation
         url: https://docs.triplelift.com
-      - type: OpenAPI
-        url: https://triplelift-docs.readme.io/llms.txt
-  - name: TripleLift Supply Publisher API
-    description: REST API for supply partners and publishers to access network reporting,
-      connected TV publisher network reports, and integration management. Provides
-      synchronous and asynchronous query capabilities with rate limiting and versioned
-      endpoints (v1.0 through v1.3).
+      - type: APIReference
+        url: https://docs.triplelift.com/docs/openrtb-25-2
+      - type: GettingStarted
+        url: https://docs.triplelift.com/docs/supply-partners
+      - type: LLMsTxt
+        url: llms/triplelift-llms.txt
+      - type: AgentSkill
+        url: skills/triplelift-tlx-supply-integration.md
+  - name: TripleLift Reporting API
+    description: GraphQL API for publishers and supply partners covering standard and
+      connected TV (CTV) network reporting. A single unversioned endpoint exposes
+      publisherNetworkReport and ctvPublisherNetworkReport plus their filter-option and
+      asynchronous CSV export counterparts, with cursor pagination, a 5,000-row
+      synchronous ceiling, and published rate limits of one request per five seconds and
+      1,000 requests per day per API key. Authentication requires a paired X-API-Key
+      header and a monthly-expiring Bearer JWT. Previously catalogued as a REST "Supply
+      Publisher API" with versioned endpoints; corrected 2026-08-12 from the provider's
+      own documentation.
     image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
     humanURL: https://supply-docs.triplelift.com/reference/introduction
-    baseURL: https://supply-docs.triplelift.com
+    baseURL: https://reporting-api.triplelift.net
     tags:
       - Publisher
       - Reporting
       - Connected TV
       - Supply Partners
+      - GraphQL
     properties:
       - type: Documentation
         url: https://supply-docs.triplelift.com/reference/introduction
-      - type: OpenAPI
-        url: https://supply-docs.triplelift.com/llms.txt
+      - type: APIReference
+        url: https://supply-docs.triplelift.com/reference/publisher-endpoints
+      - type: GraphQL
+        url: graphql/triplelift-graphql.yml
+      - type: LLMsTxt
+        url: llms/triplelift-supply-llms.txt
+      - type: ChangeLog
+        url: changelog/triplelift-changelog.yml
+      - type: AgentSkill
+        url: skills/triplelift-publisher-reporting.md
+      - type: AgentSkill
+        url: skills/triplelift-async-report-export.md
 common:
   - type: DomainSecurity
     url: security/triplelift-domain-security.yml
@@ -94,6 +125,53 @@ common:
     url: rate-limits/triplelift-rate-limits.yml
   - type: FinOps
     url: finops/triplelift-finops.yml
+  - type: DeveloperPortal
+    url: https://docs.triplelift.com
+  - type: APIReference
+    url: https://supply-docs.triplelift.com/reference/introduction
+  - type: PrivacyPolicy
+    url: https://triplelift.com/privacy/
+  - type: Login
+    url: https://console.triplelift.com
+  - type: Support
+    url: https://triplelift.com/contact-us/
+  - type: StatusPage
+    url: https://status.triplelift.com/
+  - type: WellKnown
+    url: well-known/triplelift-well-known.yml
+  - type: MCPServer
+    url: mcp/triplelift-mcp.yml
+  - type: GraphQL
+    url: graphql/triplelift-graphql.yml
+  - type: Authentication
+    url: authentication/triplelift-authentication.yml
+  - type: OAuthScopes
+    url: scopes/triplelift-scopes.yml
+  - type: Conventions
+    url: conventions/triplelift-conventions.yml
+  - type: ErrorCatalog
+    url: errors/triplelift-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/triplelift-lifecycle.yml
+  - type: ChangeLog
+    url: changelog/triplelift-changelog.yml
+  - type: Conformance
+    url: conformance/triplelift-conformance.yml
+  - type: Packages
+    url: packages/triplelift-packages.yml
+  - type: SDKs
+    url: packages/triplelift-packages.yml
+  - type: TrustCenter
+    url: security/triplelift-trust-center.yml
+  - type: LLMsTxt
+    url: llms/triplelift-llms.txt
+  - type: AgentSkill
+    url: skills/_index.yml
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
+x-enrichment:
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 22
+  pass: local-v1
