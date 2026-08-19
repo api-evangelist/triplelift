@@ -27,7 +27,7 @@ image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/triplelift
 url: https://raw.githubusercontent.com/api-evangelist/triplelift/refs/heads/main/apis.yml
 created: '2026-06-13'
 modified: '2026-08-12'
-specificationVersion: '0.19'
+specificationVersion: '0.23'
 tags:
   - Programmatic Advertising
   - Native Advertising
