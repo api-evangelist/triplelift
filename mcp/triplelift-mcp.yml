@@ -1,89 +1,88 @@
 name: TripleLift MCP Servers
-description: >-
-  Three live Model Context Protocol endpoints were found on TripleLift-controlled
-  hosts. Two are documentation servers provisioned by ReadMe on TripleLift's own
-  docs domains; one is a WordPress MCP server on the marketing site with a full
-  OAuth 2.1 discovery chain. All three refuse an anonymous tools/list, so no real
-  tool schemas were captured. TripleLift does not advertise any of them in its
+description: Three live Model Context Protocol endpoints were found on TripleLift-controlled hosts. Two
+  are documentation servers provisioned by ReadMe on TripleLift's own docs domains; one is a WordPress
+  MCP server on the marketing site with a full OAuth 2.1 discovery chain. All three refuse an anonymous
+  tools/list, so no real tool schemas were captured. TripleLift does not advertise any of them in its
   documentation — none is mentioned in either llms.txt.
 generated: '2026-08-12'
 method: probed
 source: live JSON-RPC tools/list probes, 2026-08-12
 status: gated
 servers:
-  - name: TripleLift Documentation MCP (TLX / demand docs)
-    url: https://docs.triplelift.com/mcp
-    transport: streamable-http
-    platform: ReadMe
-    status: gated
-    probe:
-      method: 'POST tools/list'
-      accept: application/json, text/event-stream
-      http_status: 401
-      response: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
-      www_authenticate: none
-      note: >-
-        The 401 carries no WWW-Authenticate header and the host serves no
-        /.well-known/oauth-protected-resource, so an MCP client has no discoverable
-        path to authenticate. Tool list not captured.
-    tools: []
-  - name: TripleLift Supplier Documentation MCP (Reporting API docs)
-    url: https://supply-docs.triplelift.com/mcp
-    transport: streamable-http
-    platform: ReadMe
-    status: gated
-    probe:
-      method: 'POST tools/list'
-      accept: application/json, text/event-stream
-      http_status: 401
-      response: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
-      www_authenticate: none
-    tools: []
-  - name: TripleLift WordPress MCP
-    url: https://triplelift.com/wp-json/mcp/mcp-oauth-server
-    transport: http
-    platform: WordPress (wp-abilities/v1 + mcp namespaces present in the REST index)
-    status: gated
-    probe:
-      method: 'POST tools/list'
-      http_status: 401
-      response: '{"code":"mcp_unauthorized","message":"MCP authentication required.","data":{"status":401}}'
-    discovery:
-      protected_resource_metadata: https://triplelift.com/.well-known/oauth-protected-resource
-      authorization_server_metadata: https://triplelift.com/.well-known/oauth-authorization-server
-      authorization_endpoint: https://triplelift.com/oauth/authorize
-      token_endpoint: https://triplelift.com/oauth/token
-      scopes_supported:
-        - mcp
-      pkce: S256
-      dynamic_client_registration: client_id_metadata_document
-      note: >-
-        This is the only one of the three with a complete, spec-conformant MCP
-        discovery chain — RFC 9728 protected-resource metadata pointing at RFC 8414
-        authorization-server metadata. It is also the least interesting surface: it
-        fronts the WordPress marketing site, not the advertising platform.
-    tools: []
-    surface: marketing site content (WordPress abilities), not the TripleLift APIs
-tool_crosswalk: not applicable — no OpenAPI is published for any TripleLift API and no MCP tool list could be retrieved, so there is nothing on either side of a crosswalk to bind.
+- name: TripleLift Documentation MCP (TLX / demand docs)
+  url: https://docs.triplelift.com/mcp
+  transport: streamable-http
+  platform: ReadMe
+  status: gated
+  probe:
+    method: POST tools/list
+    accept: application/json, text/event-stream
+    http_status: 401
+    response: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+    www_authenticate: none
+    note: The 401 carries no WWW-Authenticate header and the host serves no /.well-known/oauth-protected-resource,
+      so an MCP client has no discoverable path to authenticate. Tool list not captured.
+  tools: []
+- name: TripleLift Supplier Documentation MCP (Reporting API docs)
+  url: https://supply-docs.triplelift.com/mcp
+  transport: streamable-http
+  platform: ReadMe
+  status: gated
+  probe:
+    method: POST tools/list
+    accept: application/json, text/event-stream
+    http_status: 401
+    response: '{"jsonrpc":"2.0","error":{"code":-32001,"message":"Authorization required"},"id":null}'
+    www_authenticate: none
+  tools: []
+- name: TripleLift WordPress MCP
+  url: https://triplelift.com/wp-json/mcp/mcp-oauth-server
+  transport: http
+  platform: WordPress (wp-abilities/v1 + mcp namespaces present in the REST index)
+  status: gated
+  probe:
+    method: POST tools/list
+    http_status: 401
+    response: '{"code":"mcp_unauthorized","message":"MCP authentication required.","data":{"status":401}}'
+  discovery:
+    protected_resource_metadata: https://triplelift.com/.well-known/oauth-protected-resource
+    authorization_server_metadata: https://triplelift.com/.well-known/oauth-authorization-server
+    authorization_endpoint: https://triplelift.com/oauth/authorize
+    token_endpoint: https://triplelift.com/oauth/token
+    scopes_supported:
+    - mcp
+    pkce: S256
+    dynamic_client_registration: client_id_metadata_document
+    note: 'This is the only one of the three with a complete, spec-conformant MCP discovery chain — RFC
+      9728 protected-resource metadata pointing at RFC 8414 authorization-server metadata. It is also
+      the least interesting surface: it fronts the WordPress marketing site, not the advertising platform.'
+  tools: []
+  surface: marketing site content (WordPress abilities), not the TripleLift APIs
+tool_crosswalk: not applicable — no OpenAPI is published for any TripleLift API and no MCP tool list could
+  be retrieved, so there is nothing on either side of a crosswalk to bind.
 observations:
-  - >-
-    TripleLift ships MCP endpoints on three hosts without documenting a single one.
-    An agent that discovers docs.triplelift.com/mcp gets a bare 401 with no
-    WWW-Authenticate and no protected-resource metadata, which is a dead end.
-  - >-
-    The only fully discoverable MCP server points at the WordPress marketing site.
-    The APIs a partner actually integrates — TLX and the Reporting GraphQL API —
-    have no MCP surface at all.
+- TripleLift ships MCP endpoints on three hosts without documenting a single one. An agent that discovers
+  docs.triplelift.com/mcp gets a bare 401 with no WWW-Authenticate and no protected-resource metadata,
+  which is a dead end.
+- The only fully discoverable MCP server points at the WordPress marketing site. The APIs a partner actually
+  integrates — TLX and the Reporting GraphQL API — have no MCP surface at all.
 x-evidence:
-  - url: https://docs.triplelift.com/mcp
-    http_status: 401
-    fetched: '2026-08-12'
-  - url: https://supply-docs.triplelift.com/mcp
-    http_status: 401
-    fetched: '2026-08-12'
-  - url: https://triplelift.com/wp-json/mcp/mcp-oauth-server
-    http_status: 401
-    fetched: '2026-08-12'
-  - url: https://triplelift.com/.well-known/oauth-protected-resource
-    http_status: 200
-    fetched: '2026-08-12'
+- url: https://docs.triplelift.com/mcp
+  http_status: 401
+  fetched: '2026-08-12'
+- url: https://supply-docs.triplelift.com/mcp
+  http_status: 401
+  fetched: '2026-08-12'
+- url: https://triplelift.com/wp-json/mcp/mcp-oauth-server
+  http_status: 401
+  fetched: '2026-08-12'
+- url: https://triplelift.com/.well-known/oauth-protected-resource
+  http_status: 200
+  fetched: '2026-08-12'
+deployment:
+  mode: remote
+  endpoint: https://triplelift.com/wp-json/mcp/mcp-oauth-server
+  verified: probed
+  probe: gated
+  checked: '2026-08-12'
+  source: catalog MCP census
