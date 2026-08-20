@@ -36,6 +36,19 @@ tags:
   - Header Bidding
   - Connected TV
   - Supply Side Platform
+  - Demand-Side Platform
+  - GraphQL
+  - AdTech
+  - Publisher Reporting
+  - Real-Time Bidding
+tags_raw:
+  - Programmatic Advertising
+  - Native Advertising
+  - Ad Exchange
+  - OpenRTB
+  - Header Bidding
+  - Connected TV
+  - Supply Side Platform
   - Demand Side Platform
   - GraphQL
   - Ad Tech
@@ -82,6 +95,12 @@ apis:
     humanURL: https://supply-docs.triplelift.com/reference/introduction
     baseURL: https://reporting-api.triplelift.net
     tags:
+      - Publishers
+      - Reporting
+      - Connected TV
+      - Supply Partners
+      - GraphQL
+    tags_raw:
       - Publisher
       - Reporting
       - Connected TV
