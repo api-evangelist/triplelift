@@ -11,6 +11,17 @@ description: TripleLift is a programmatic advertising exchange and supply-side p
   or email. TripleLift also publishes sellers.json, a component-level status page, a
   dated Reporting API changelog, and Prebid.js and Prebid Server bid adapters.
 type: Index
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: unknown
