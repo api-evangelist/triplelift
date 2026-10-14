@@ -1,0 +1,42 @@
+generated: '2026-10-14'
+method: searched
+checked:
+- https://vendor-list.consensu.org/v3/vendor-list.json
+marketplace_apps: []
+edges:
+- partner_name: IAB Europe TCF Global Vendor List
+  partner: null
+  partner_match: domain
+  type: contract
+  channel: standard-directory
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://vendor-list.consensu.org/v3/vendor-list.json
+  contract_reference:
+    register: IAB Europe TCF Global Vendor List
+    spec_file: null
+    role: tcf-vendor
+    registered_name: Triple Lift, Inc.
+    register_id: '28'
+    products:
+    - Triple Lift, Inc.
+    matched_domain: triplelift.com
+    api_families:
+    - feature-1
+    - feature-2
+    - purpose-1
+    - purpose-10
+    - purpose-2
+    - purpose-3
+    - purpose-4
+    - purpose-7
+    - purpose-9
+    - special-feature-1
+    - special-purpose-1
+    - special-purpose-2
+    - special-purpose-3
+    api_families_basis: TCF purposes, special purposes, features and special features declared on the registration
+    detected_by: sweep-adtech.py
+    detected: '2026-10-14'
+  detected_by: sweep-adtech.py
+  detected: '2026-10-14'
