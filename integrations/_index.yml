@@ -39,3 +39,34 @@
     detected: '2026-10-14'
   status: not-a-workflow
   arazzo: null
+- slug: triplelift-amazon-ads-partner-directory-technology
+  label: Amazon Ads (partner directory, technology)
+  partner: amazon
+  partner_name: Amazon Ads (partner directory, technology)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://advertising.amazon.com/partners/directory
+  source: edge
+  relationship: platform-app
+  contract_reference:
+    register: Amazon Ads Partner Directory (advertising.amazon.com/partners/directory, GetPartners)
+    registered_name: TripleLift
+    register_id: amzn1.ads1.ma1.6x13tmnsa59m4rhp1i21t5wso
+    matched_domain: triplelift.com
+    matched_by: domain
+    services:
+    - CAMPAIGN_MANAGEMENT
+    - CAMPAIGN_SETUP
+    ads_products:
+    - AMAZON_DSP
+    - SPONSORED_DISPLAY
+    - VIDEO_ADS
+    service_models:
+    - SELF_SERVICE
+    signal_note: listing = participation; accreditation recorded as partner_tier; ads_certifications are Amazon
+      Ads LEARNING certifications held by staff, not product conformance, never certified_products
+    detected_by: sweep-amazon-sp-api-appstore.py
+    detected: '2026-10-21'
+  status: not-a-workflow
+  arazzo: null
